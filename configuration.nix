@@ -107,6 +107,7 @@
       firefox
       tree
       vesktop
+      yubioath-flutter
     ];
   };
 
