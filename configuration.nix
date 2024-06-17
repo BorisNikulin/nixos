@@ -7,9 +7,10 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      <nixos-hardware/framework/16-inch/7040-amd>
       ./hardware-configuration.nix
     ];
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # https://nixos.wiki/wiki/ZFS
   boot.loader.efi.canTouchEfiVariables = true;
