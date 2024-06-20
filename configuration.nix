@@ -109,6 +109,7 @@
       tree
       vesktop
       yubioath-flutter
+      flameshot
     ];
   };
 
