@@ -21,6 +21,9 @@
     driversi686Linux.amdvlk
   ];
 
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+
   fileSystems."/" =
     { device = "framework/root";
       fsType = "zfs";
