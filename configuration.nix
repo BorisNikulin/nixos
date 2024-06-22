@@ -110,6 +110,8 @@
       firefox
       tree
       vesktop
+      yubikey-personalization
+      yubikey-manager
       yubioath-flutter
       flameshot
     ];
@@ -123,6 +125,11 @@
     git
     gnupg
   ];
+
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   programs.steam = {
     enable = true;
@@ -142,6 +149,7 @@
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
+  services.udev.packages = [ pkgs.yubikey-personalization ];
   services.pcscd.enable = true;
 
   # Open ports in the firewall.
