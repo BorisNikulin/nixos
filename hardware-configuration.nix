@@ -4,51 +4,46 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules =
+    [ "nvme" "xhci_pci" "thunderbolt" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" "amdgpu" ];
   boot.extraModulePackages = [ ];
 
-  hardware.opengl.extraPackages = with pkgs; [
-    amdvlk
-  ];
+  hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
   # For 32 bit applications 
-  hardware.opengl.extraPackages32 = with pkgs; [
-    driversi686Linux.amdvlk
-  ];
+  hardware.opengl.extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
 
-  fileSystems."/" =
-    { device = "framework/root";
-      fsType = "zfs";
-    };
+  fileSystems."/" = {
+    device = "framework/root";
+    fsType = "zfs";
+  };
 
-  fileSystems."/nix" =
-    { device = "framework/nix";
-      fsType = "zfs";
-    };
+  fileSystems."/nix" = {
+    device = "framework/nix";
+    fsType = "zfs";
+  };
 
-  fileSystems."/var" =
-    { device = "framework/var";
-      fsType = "zfs";
-    };
+  fileSystems."/var" = {
+    device = "framework/var";
+    fsType = "zfs";
+  };
 
-  fileSystems."/home" =
-    { device = "framework/home";
-      fsType = "zfs";
-    };
+  fileSystems."/home" = {
+    device = "framework/home";
+    fsType = "zfs";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/A566-E6D4";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/A566-E6D4";
+    fsType = "vfat";
+    options = [ "fmask=0077" "dmask=0077" ];
+  };
 
   swapDevices = [ ];
 
@@ -60,5 +55,6 @@
   # networking.interfaces.wlp1s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.amd.updateMicrocode =
+    lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
