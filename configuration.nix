@@ -112,6 +112,7 @@
       yubikey-manager
       yubioath-flutter
       flameshot
+      jellyfin-media-player
     ];
   };
 
