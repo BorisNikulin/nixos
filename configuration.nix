@@ -23,8 +23,6 @@
       path = "/boot";
     }];
   };
-  # default 6.6 caused hang on shutdown after zfs unmounted and screen went black with no errors in the journal
-  boot.kernelPackages = pkgs.linuxPackages_6_8;
 
   services.zfs.trim = {
     enable = true;
