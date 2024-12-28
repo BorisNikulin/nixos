@@ -12,9 +12,13 @@
   boot.kernelModules = [ "kvm-amd" "amdgpu" ];
   boot.extraModulePackages = [ ];
 
-  hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
+  hardware.graphics.extraPackages = with pkgs; [
+    amdvlk
+    # OpenCL
+    rocmPackages.clr.icd
+  ];
   # For 32 bit applications 
-  hardware.opengl.extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
+  hardware.graphics.extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
@@ -43,6 +47,23 @@
     device = "/dev/disk/by-uuid/A566-E6D4";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
+  };
+
+  fileSystems."/mnt/share" = {
+    device = "//10.0.0.7/share";
+    fsType = "cifs";
+    options = let
+      # this line prevents hanging on network split
+      automount_opts =
+        "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+    in [
+      "${automount_opts}"
+      "nofail"
+      "credentials=/run/secrets/share"
+      "users"
+      "uid=1000"
+      "gid=100"
+    ];
   };
 
   swapDevices = [ ];

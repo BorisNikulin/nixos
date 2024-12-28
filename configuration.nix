@@ -112,7 +112,10 @@
       yubikey-manager
       yubioath-flutter
       flameshot
+      mpv
       jellyfin-media-player
+      digikam
+      darktable
     ];
   };
 
