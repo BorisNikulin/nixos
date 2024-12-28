@@ -59,7 +59,7 @@
     in [
       "${automount_opts}"
       "nofail"
-      "credentials=/run/secrets/share"
+      "credentials=${config.sops.secrets.share.path}"
       "users"
       "uid=1000"
       "gid=100"
