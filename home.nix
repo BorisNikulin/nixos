@@ -21,6 +21,34 @@
     darktable
   ];
 
+  programs.bash = {
+    enable = true;
+  };
+
+  programs.zsh = {
+    enable = true;
+
+    shellAliases = {
+      ll = "ls -lah";
+    };
+  };
+
+  programs.git = {
+    enable = true;
+    
+    userName = "Boris Nikulin";
+    userEmail = "NikulinBE@gmail.com";
+    signing = {
+      key = "756B53520F832A2C53B1509D218C4D957DFFFB72";
+      signByDefault = true;
+    };
+  };
+
+  programs.vim = {
+    enable = true;
+    defaultEditor = true;
+  };
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
