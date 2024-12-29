@@ -123,6 +123,7 @@
   programs.steam = {
     enable = true;
     gamescopeSession.enable = true;
+    localNetworkGameTransfers.openFirewall = true;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
