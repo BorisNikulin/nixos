@@ -104,19 +104,6 @@
   users.users.main = {
     isNormalUser = true;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      firefox
-      tree
-      vesktop
-      yubikey-personalization
-      yubikey-manager
-      yubioath-flutter
-      flameshot
-      mpv
-      jellyfin-media-player
-      digikam
-      darktable
-    ];
   };
 
   # List packages installed in system profile. To search, run:
