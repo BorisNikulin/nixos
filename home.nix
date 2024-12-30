@@ -27,14 +27,20 @@
 
   programs.zsh = {
     enable = true;
-
     shellAliases = {
-      ll = "ls -lah";
+      ll = "ls -algh";
     };
+  };
+
+  programs.starship = {
+    enable = true;
   };
 
   programs.alacritty = {
     enable = true;
+    settings = {
+      terminal.shell = "${pkgs.zsh}/bin/zsh";
+    };
   };
 
   programs.git = {
