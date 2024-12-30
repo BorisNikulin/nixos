@@ -70,6 +70,9 @@
     '';
   };
 
+  # For zsh enableCompletion of system packages
+  environment.pathsToLink = [ "/share/zsh" ];
+
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;

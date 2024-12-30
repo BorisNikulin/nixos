@@ -27,6 +27,10 @@
 
   programs.zsh = {
     enable = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    defaultKeymap = "viins";
+
     shellAliases = {
       ll = "ls -algh";
     };
