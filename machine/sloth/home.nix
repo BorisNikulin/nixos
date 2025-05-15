@@ -6,19 +6,24 @@
   home.username = "main";
   home.homeDirectory = "/home/main";
 
-
   home.packages = with pkgs; [
     firefox
     tree
     vesktop
+    flameshot
+
     yubikey-personalization
     yubikey-manager
     yubioath-flutter
-    flameshot
+
     mpv
     jellyfin-media-player
+
     digikam
     darktable
+
+    sdrpp
+    sdrangel
   ];
 
   programs.bash = {
@@ -49,7 +54,7 @@
 
   programs.git = {
     enable = true;
-    
+
     userName = "Boris Nikulin";
     userEmail = "NikulinBE@gmail.com";
     signing = {

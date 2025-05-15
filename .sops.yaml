@@ -1,6 +1,7 @@
 keys:
   - &boris FC52BB382B7E444AD03AB2F2FA95841AC16F359F
-  - &framework age1gyr4wlurv7ay73dnltsahndak7j3jx8apgd5ymp8l03ch0swn9fq2c8539
+  - &sun age15ssm64ce2j8v3pfpmy8exlhh7nx58m2zamlkmh0h5tnmvcd2v9nsv6wj4j
+  - &sloth age1gyr4wlurv7ay73dnltsahndak7j3jx8apgd5ymp8l03ch0swn9fq2c8539
 creation_rules:
   -
     path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
@@ -9,4 +10,5 @@ creation_rules:
         pgp:
          - *boris
         age:
-          - *framework
+          - *sun
+          - *sloth

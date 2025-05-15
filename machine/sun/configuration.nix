@@ -2,26 +2,31 @@
 # your system. Help is available in the configuration.nix(5)e man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  imports = [ # Include the results of the hardware scan.
+  imports = [
+    # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./share/iscsi.nix
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nixpkgs.config.allowUnfree = true;
 
-  # https://nixos.wiki/wiki/ZFS
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub = {
-    enable = true;
-    zfsSupport = true;
-    efiSupport = true;
-    mirroredBoots = [{
-      devices = [ "nodev" ];
-      path = "/boot";
-    }];
+  boot = {
+    loader = {
+      efi.canTouchEfiVariables = true;
+      systemd-boot.enable = true;
+    };
   };
 
   services.zfs.trim = {
@@ -36,13 +41,12 @@
 
   services.fwupd.enable = true;
 
-  networking.hostName = "sloth";
+  networking.hostName = "sun";
   # hostId derived from systemd machine-id; head -c 8 /etc/machine-id
-  networking.hostId = "e74cb8bd";
+  networking.hostId = "3d150210";
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable =
-    true; # Easiest to use and most distros use this by default.
+  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -55,61 +59,40 @@
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
     font = "Lat2-Terminus16";
-    # keyMap = "us";
-    useXkbConfig = true; # use xkb.options in tty.
-  };
-
-  # https://wiki.nixos.org/wiki/Hardware/Framework/Laptop_16
-  # Touchpad rejection
-  environment.etc = {
-    "libinput/local-overrides.quirks".text = ''
-      [Keyboard]
-      MatchUdevType=keyboard
-      MatchName=Framework Laptop 16 Keyboard Module - ANSI Keyboard
-      AttrKeyboardIntegration=internal
-    '';
+    keyMap = "us";
   };
 
   # For zsh enableCompletion of system packages
   environment.pathsToLink = [ "/share/zsh" ];
 
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
-  };
-  services.desktopManager.plasma6.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb.layout = "us";
-  services.xserver.xkb.options = "eurosign:e,caps:escape";
-
-  # Enable experimental running of electron/chromium apps natively in wayland.
-  # Avoids scaling issues of xwayland.
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
   # Enable sound.
   # hardware.pulseaudio.enable = true;
   # OR
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.libinput.enable = true;
+  #services.pipewire = {
+  #  enable = true;
+  #  alsa.enable = true;
+  #  alsa.support32Bit = true;
+  #  pulse.enable = true;
+  #};
 
   programs.zsh.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.root = {
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJApd1snd5+dTT3y3G44+yhZgzGjTJIg0dLOV0Ssk/CI"
+    ];
+  };
   users.users.main = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [
+      "wheel"
+      "plugdev"
+    ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJApd1snd5+dTT3y3G44+yhZgzGjTJIg0dLOV0Ssk/CI"
+    ];
   };
 
   # List packages installed in system profile. To search, run:
@@ -118,35 +101,18 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     git
-    gnupg
   ];
-
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
-  programs.steam = {
-    enable = true;
-    gamescopeSession.enable = true;
-    localNetworkGameTransfers.openFirewall = true;
-  };
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  services.pcscd.enable = true;
+  services.openssh = {
+    enable = true;
+    ports = [ 22 ];
+    settings = {
+      PasswordAuthentication = false;
+    };
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -176,7 +142,5 @@
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.05"; # Did you read the comment?
-
+  system.stateVersion = "24.11"; # Did you read the comment?
 }
-
