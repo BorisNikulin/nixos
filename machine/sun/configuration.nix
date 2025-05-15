@@ -87,7 +87,7 @@
   # https://nixos.org/manual/nixos/stable/#module-services-prometheus-exporters-configuration
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/monitoring/prometheus/default.nix
   services.prometheus = {
-    enable = false;
+    enable = true;
     port = 9000;
     stateDir = "prometheus"; # /var/lib/prometheus
     globalConfig.scrape_interval = "1m";
