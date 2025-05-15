@@ -1,3 +1,4 @@
+{ config, lib, pkgs, ... } :
 {
   disko.devices = {
     disk = {
@@ -157,6 +158,13 @@
               # Use to bootstrap initial creation during install when root does not exist
               # keyformat = "passphrase";
               # keylocation = "prompt";
+            };
+          };
+          "encrypted/prometheus" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
+              blocksize = "128K";
             };
           };
           game = {
