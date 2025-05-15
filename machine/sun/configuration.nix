@@ -47,6 +47,32 @@
     virtualAliasMap = config.sops.secrets."postfix/virtual_alias_map".path;
   };
 
+  services.smartd = {
+    enable = true;
+    notifications.mail.enable = true;
+    devices =
+      let
+        disks = builtins.attrValues config.disko.devices.disk;
+        filterByZfsPool =
+          pool: builtins.filter (disk: disk.content.partitions.zfs.content.pool == pool) disks;
+        zrootDisks = filterByZfsPool "zroot";
+        fastDisks = filterByZfsPool "fast";
+        addOptions =
+          options:
+          builtins.map (disk: {
+            inherit (disk) device;
+            inherit options;
+          });
+        ssdOptions = addOptions "-H -W 5,0,30 -s (S/../.././08|L/../01/./07)";
+
+      in
+      builtins.concatLists [
+        (ssdOptions zrootDisks)
+        (ssdOptions fastDisks)
+        # TODO: add main pool disks to disko and add here
+      ];
+  };
+
   networking.hostName = "sun";
   # hostId derived from systemd machine-id; head -c 8 /etc/machine-id
   networking.hostId = "3d150210";
