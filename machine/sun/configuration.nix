@@ -41,6 +41,12 @@
 
   services.fwupd.enable = true;
 
+  services.postfixRootToGmail = {
+    enable = true;
+    smtpSaslPasswordMap = config.sops.secrets."postfix/sasl_password_map".path;
+    virtualAliasMap = config.sops.secrets."postfix/virtual_alias_map".path;
+  };
+
   networking.hostName = "sun";
   # hostId derived from systemd machine-id; head -c 8 /etc/machine-id
   networking.hostId = "3d150210";

@@ -34,13 +34,15 @@
       nixosConfigurations.sun = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          # sops-nix.nixosModules.sops
-          # ./sops.nix
+          sops-nix.nixosModules.sops
+          ./sops.nix
 
           disko.nixosModules.disko
           ./machine/sun/disko.nix
 
           ./machine/sun/configuration.nix
+
+          ./nixosModules/postfix
         ];
       };
 
