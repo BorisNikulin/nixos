@@ -164,7 +164,6 @@
             type = "zfs_fs";
             options = {
               mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
-              blocksize = "128K";
             };
           };
           game = {
