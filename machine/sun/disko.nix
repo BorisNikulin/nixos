@@ -39,6 +39,7 @@
               };
             };
             zfs = {
+              start = "4194432";
               size = "100%";
               content = {
                 type = "zfs";
