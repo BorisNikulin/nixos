@@ -30,7 +30,7 @@
           type = "gpt";
           partitions = {
             swap = {
-              # 2G
+              # 2GiB
               start = "128";
               end = "4194304";
               content = {
@@ -39,8 +39,9 @@
               };
             };
             zfs = {
+              # 18TB - 2GiB = 16.4TiB
               start = "4194432";
-              size = "100%";
+              end = "35156656094";
               content = {
                 type = "zfs";
                 pool = "main";
