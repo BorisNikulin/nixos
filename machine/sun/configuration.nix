@@ -73,47 +73,54 @@
           pool: builtins.filter (disk: disk.content.partitions.zfs.content.pool == pool) disks;
         zrootDisks = filterByZfsPool "zroot";
         fastDisks = filterByZfsPool "fast";
+        mainDisks = filterByZfsPool "main";
         addOptions =
           options:
           builtins.map (disk: {
             inherit (disk) device;
             inherit options;
           });
-        ssdOptions = addOptions "-H -W 5,0,30 -s (S/../.././08|L/../01/./07)";
+        ssdOptions = addOptions "-H -W 10,40,50 -s (S/../.././08|L/../01/./07)";
+        hddOptions = addOptions "-H -W 5,30,40 -s (S/../.././08|L/../01/./07)";
 
       in
       builtins.concatLists [
         (ssdOptions zrootDisks)
         (ssdOptions fastDisks)
-        # TODO: add main pool disks to disko and add here
+        (hddOptions mainDisks)
       ];
   };
 
-    # https://nixos.org/manual/nixos/stable/#module-services-prometheus-exporters
-    # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/services/monitoring/prometheus/exporters/node.nix
+  # https://nixos.org/manual/nixos/stable/#module-services-prometheus-exporters
+  # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/services/monitoring/prometheus/exporters/node.nix
   services.prometheus.exporters.node = {
     enable = true;
-    port = 9001;
+    port = 9002;
     # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/monitoring/prometheus/exporters.nix
-    enabledCollectors = [ "systemd" "ethtool" ];
+    enabledCollectors = [
+      "systemd"
+      "ethtool"
+    ];
     # /nix/store/zgsw0yx18v10xa58psanfabmg95nl2bb-node_exporter-1.8.1/bin/node_exporter  --help
   };
 
-    # https://wiki.nixos.org/wiki/Prometheus
+  # https://wiki.nixos.org/wiki/Prometheus
   # https://nixos.org/manual/nixos/stable/#module-services-prometheus-exporters-configuration
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/monitoring/prometheus/default.nix
   services.prometheus = {
-    enable = true;
-    port = 9000;
+    enable = false;
+    port = 9001;
     stateDir = "prometheus"; # /var/lib/prometheus
     globalConfig.scrape_interval = "1m";
     scrapeConfigs = [
-    {
-      job_name = "node";
-      static_configs = [{
-        targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
-      }];
-    }
+      {
+        job_name = "node";
+        static_configs = [
+          {
+            targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+          }
+        ];
+      }
     ];
   };
 
