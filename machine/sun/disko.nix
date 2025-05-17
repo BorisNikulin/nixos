@@ -258,6 +258,7 @@
                 casesensitivity = "insensitive";
                 acltype = "nfsv4";
                 aclmode = "restricted";
+                atime = "on";
               };
             };
             "share/public" = {
