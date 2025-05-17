@@ -270,7 +270,7 @@
             "share/public-write" = {
               type = "zfs_fs";
               options = {
-                mountpoint = "/mnt/main/share/public";
+                mountpoint = "/mnt/main/share/public-write";
                 canmount = "on";
                 refquota = "1T";
               };
