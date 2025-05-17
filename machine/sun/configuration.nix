@@ -14,6 +14,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./share/iscsi.nix
+    ./share/smb.nix
   ];
 
   nix.settings.experimental-features = [
@@ -156,6 +157,13 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJApd1snd5+dTT3y3G44+yhZgzGjTJIg0dLOV0Ssk/CI"
     ];
+  };
+
+  users.users.boris = {
+    isNormalUser = true;
+    createHome = false;
+    useDefaultShell = false;
+    hashedPasswordFile = config.sops.secrets."boris/passwordHash".path;
   };
 
   # List packages installed in system profile. To search, run:
