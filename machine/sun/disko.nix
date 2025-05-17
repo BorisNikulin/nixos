@@ -255,7 +255,7 @@
               options = {
                 mountpoint = "/mnt/main/share";
                 canmount = "on";
-                casesensitiveity = "insensitive";
+                casesensitivity = "insensitive";
                 acltype = "nfsv4";
                 aclmode = "restricted";
               };
