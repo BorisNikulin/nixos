@@ -143,9 +143,9 @@
                 compression = "zstd";
               };
             };
-            "encrypted/keys" = {
+            "encrypted/key" = {
               type = "zfs_fs";
-              mountpoint = "/keys";
+              mountpoint = "/etc/zfs/key";
               options = {
                 copies = "2";
               };
@@ -196,7 +196,7 @@
             };
             "encrypted/prometheus" = {
               type = "zfs_fs";
-              mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
+              mountpoint = "/mnt/fast/old-prometheus";
             };
             "encrypted/app" = {
               type = "zfs_fs";
@@ -204,7 +204,7 @@
             };
             "encrypted/app/prometheus" = {
               type = "zfs_fs";
-              mountpoint = "/mnt/fast/app/prometheus";
+              mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
             };
             game = {
               type = "zfs_volume";
