@@ -32,12 +32,13 @@
 
   services.zfs.trim = {
     enable = true;
-    interval = "monthly";
+    interval = "weekly";
   };
 
   services.zfs.autoScrub = {
     enable = true;
-    interval = "monthly";
+    interval = "* *-*-1,15 8:*:*";
+    randomizedDelaySec = "1h";
   };
 
   services.zfs.zed.settings = {
