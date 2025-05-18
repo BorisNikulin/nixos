@@ -50,7 +50,6 @@
           };
         };
       };
-
     in
     {
       disk = {
@@ -125,7 +124,7 @@
             encrypted = {
               type = "zfs_fs";
               options = {
-                      mountpoint = "none";
+                mountpoint = "none";
                 canmount = "off";
                 encryption = "aes-256-gcm";
                 keyformat = "passphrase";
@@ -152,7 +151,6 @@
             };
           };
         };
-        # };
 
         fast = {
           type = "zpool";
@@ -184,7 +182,7 @@
             encrypted = {
               type = "zfs_fs";
               options = {
-              mountpoint = "none";
+                mountpoint = "none";
                 canmount = "off";
                 encryption = "aes-256-gcm";
                 keyformat = "hex";
@@ -193,10 +191,6 @@
                 # keyformat = "passphrase";
                 # keylocation = "prompt";
               };
-            };
-            "encrypted/prometheus" = {
-              type = "zfs_fs";
-              mountpoint = "/mnt/fast/old-prometheus";
             };
             "encrypted/app" = {
               type = "zfs_fs";
@@ -253,7 +247,7 @@
             encrypted = {
               type = "zfs_fs";
               options = {
-              mountpoint = "none";
+                mountpoint = "none";
                 canmount = "off";
                 encryption = "aes-256-gcm";
                 keyformat = "hex";
@@ -276,7 +270,6 @@
             "encrypted/share/public" = {
               type = "zfs_fs";
               mountpoint = "/mnt/main/share2/public";
-              };
             };
             "encrypted/share/public-write" = {
               type = "zfs_fs";
@@ -309,9 +302,6 @@
             media = {
               type = "zfs_fs";
               mountpoint = "/mnt/main/media";
-              options = {
-                acltype = "posix";
-              };
             };
           };
         };
