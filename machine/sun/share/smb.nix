@@ -46,7 +46,7 @@
       };
       "media" = {
         "path" = config.disko.devices.zpool.main.datasets.media.mountpoint;
-        "force group" = "groupname";
+        "force group" = "media";
       };
     };
   };

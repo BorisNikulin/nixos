@@ -37,7 +37,7 @@
 
   services.zfs.autoScrub = {
     enable = true;
-    interval = "* *-*-1,15 8:*:*";
+    interval = " *-*-1,15 8:*:*";
     randomizedDelaySec = "1h";
   };
 
