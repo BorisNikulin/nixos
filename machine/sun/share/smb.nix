@@ -22,8 +22,19 @@
         "guest account" = "nobody";
         "map to guest" = "bad user";
       };
-      "share" = {
-        "path" = config.disko.devices.zpool.main.datasets.share.mountpoint;
+      "share-fast" = {
+        "path" = config.disko.devices.zpool.fast.datasets."encrypted/share".mountpoint;
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        # "valid users" = "boris";
+        # "create mask" = "0644";
+        # "directory mask" = "0755";
+        # "force user" = "username";
+        # "force group" = "groupname";
+      };
+      "share-main" = {
+        "path" = config.disko.devices.zpool.main.datasets."encrypted/share".mountpoint;
         "browseable" = "yes";
         "read only" = "no";
         "guest ok" = "no";

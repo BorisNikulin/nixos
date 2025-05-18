@@ -192,6 +192,13 @@
                 # keylocation = "prompt";
               };
             };
+            "encrypted/share" = {
+              type = "zfs_fs";
+              mountpoint = "/mnt/fast/share";
+              options = {
+                atime = "on";
+              };
+            };
             "encrypted/app" = {
               type = "zfs_fs";
               mountpoint = "/mnt/fast/app";
@@ -261,9 +268,6 @@
               type = "zfs_fs";
               mountpoint = "/mnt/main/share2";
               options = {
-                casesensitivity = "insensitive";
-                acltype = "nfsv4";
-                aclmode = "restricted";
                 atime = "on";
               };
             };
