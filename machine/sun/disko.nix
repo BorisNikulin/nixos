@@ -266,7 +266,7 @@
             };
             "encrypted/share" = {
               type = "zfs_fs";
-              mountpoint = "/mnt/main/share2";
+              mountpoint = "/mnt/main/share";
               options = {
                 atime = "on";
               };
@@ -284,7 +284,7 @@
             };
             share = {
               type = "zfs_fs";
-              mountpoint = "/mnt/main/share";
+              mountpoint = "/mnt/main/share-bak";
               options = {
                 casesensitivity = "insensitive";
                 acltype = "nfsv4";
@@ -294,11 +294,11 @@
             };
             "share/public" = {
               type = "zfs_fs";
-              mountpoint = "/mnt/main/share/public";
+              mountpoint = "/mnt/main/share-bak/public";
             };
             "share/public-write" = {
               type = "zfs_fs";
-              mountpoint = "/mnt/main/share/public-write";
+              mountpoint = "/mnt/main/share-bak/public-write";
               options = {
                 refquota = "1T";
               };
