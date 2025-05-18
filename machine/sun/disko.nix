@@ -203,7 +203,7 @@
               type = "zfs_fs";
               options = {
                 mountpoint = "none";
-                canmount = "no";
+                canmount = "off";
               };
             };
             "encrypted/app/prometheus" = {
