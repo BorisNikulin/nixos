@@ -23,7 +23,7 @@
         "map to guest" = "bad user";
       };
       "share" = {
-        "path" = config.disko.devices.zpool.main.datasets.share.options.mountpoint;
+        "path" = config.disko.devices.zpool.main.datasets.share.mountpoint;
         "browseable" = "yes";
         "read only" = "no";
         "guest ok" = "no";
@@ -32,6 +32,10 @@
         # "directory mask" = "0755";
         # "force user" = "username";
         # "force group" = "groupname";
+      };
+      "media" = {
+        "path" = config.disko.devices.zpool.main.datasets.media.mountpoint;
+        "force group" = "groupname";
       };
     };
   };

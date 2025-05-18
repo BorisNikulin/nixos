@@ -108,7 +108,7 @@
   # https://nixos.org/manual/nixos/stable/#module-services-prometheus-exporters-configuration
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/monitoring/prometheus/default.nix
   services.prometheus = {
-    enable = false;
+    enable = true;
     port = 9001;
     stateDir = "prometheus"; # /var/lib/prometheus
     globalConfig.scrape_interval = "1m";
@@ -169,11 +169,15 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJApd1snd5+dTT3y3G44+yhZgzGjTJIg0dLOV0Ssk/CI"
     ];
   };
+
+  users.groups.media = { };
+
   users.users.main = {
     isNormalUser = true;
     extraGroups = [
       "wheel"
       "plugdev"
+      "media"
     ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [
@@ -186,6 +190,9 @@
     createHome = false;
     useDefaultShell = false;
     hashedPasswordFile = config.sops.secrets."boris/passwordHash".path;
+    extraGroups = [
+      "media"
+    ];
   };
 
   # List packages installed in system profile. To search, run:
