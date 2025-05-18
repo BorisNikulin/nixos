@@ -124,8 +124,15 @@
       }
     ];
   };
-
   networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
+
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+    group = "media";
+    dataDir = config.disko.devices.zpool.fast."encrypted/app/jellyfin".mountpoint;
+    cacheDir = config.disko.devices.zpool.fast."encrypted/app/jellyfin".mountpoint;
+  };
 
   networking.hostName = "sun";
   # hostId derived from systemd machine-id; head -c 8 /etc/machine-id

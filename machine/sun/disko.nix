@@ -201,11 +201,18 @@
             };
             "encrypted/app" = {
               type = "zfs_fs";
-              mountpoint = "/mnt/fast/app";
+              options = {
+                mountpoint = "none";
+                canmount = "no";
+              };
             };
             "encrypted/app/prometheus" = {
               type = "zfs_fs";
               mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
+            };
+            "encrypted/app/jellyfin" = {
+              type = "zfs_fs";
+              mountpoint = "/mnt/fast/app/jellyfin";
             };
             game = {
               type = "zfs_volume";
