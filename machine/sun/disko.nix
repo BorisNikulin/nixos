@@ -124,9 +124,9 @@
           datasets = {
             encrypted = {
               type = "zfs_fs";
+              mountpoint = "none";
               options = {
                 canmount = "off";
-                mountpoint = "none";
                 encryption = "aes-256-gcm";
                 keyformat = "passphrase";
                 keylocation = "prompt";
@@ -183,9 +183,9 @@
           datasets = {
             encrypted = {
               type = "zfs_fs";
+              mountpoint = "none";
               options = {
                 canmount = "off";
-                mountpoint = "none";
                 encryption = "aes-256-gcm";
                 keyformat = "hex";
                 keylocation = "file:///etc/zfs/key/fast/encrypted.hex";
@@ -252,9 +252,9 @@
           datasets = {
             encrypted = {
               type = "zfs_fs";
+              mountpoint = "none";
               options = {
                 canmount = "off";
-                mountpoint = "none";
                 encryption = "aes-256-gcm";
                 keyformat = "hex";
                 keylocation = "file:///etc/zfs/key/main/encrypted.hex";
@@ -263,10 +263,36 @@
                 # keylocation = "prompt";
               };
             };
+            "encrypted/share" = {
+              type = "zfs_fs";
+              mountpoint = "/mnt/main/share2";
+              options = {
+                canmount = "on";
+                casesensitivity = "insensitive";
+                acltype = "nfsv4";
+                aclmode = "restricted";
+                atime = "on";
+              };
+            };
+            "encrypted/share/public" = {
+              type = "zfs_fs";
+              mountpoint = "/mnt/main/share2/public";
+              options = {
+                canmount = "on";
+              };
+            };
+            "encrypted/share/public-write" = {
+              type = "zfs_fs";
+              mountpoint = "/mnt/main/share2/public-write";
+              options = {
+                canmount = "on";
+                refquota = "1T";
+              };
+            };
             share = {
               type = "zfs_fs";
+              mountpoint = "/mnt/main/share";
               options = {
-                mountpoint = "/mnt/main/share";
                 canmount = "on";
                 casesensitivity = "insensitive";
                 acltype = "nfsv4";
@@ -276,23 +302,23 @@
             };
             "share/public" = {
               type = "zfs_fs";
+              mountpoint = "/mnt/main/share/public";
               options = {
-                mountpoint = "/mnt/main/share/public";
                 canmount = "on";
               };
             };
             "share/public-write" = {
               type = "zfs_fs";
+              mountpoint = "/mnt/main/share/public-write";
               options = {
-                mountpoint = "/mnt/main/share/public-write";
                 canmount = "on";
                 refquota = "1T";
               };
             };
             media = {
               type = "zfs_fs";
+              mountpoint = "/mnt/main/media";
               options = {
-                mountpoint = "/mnt/main/media";
                 canmount = "on";
                 acltype = "posix";
               };
