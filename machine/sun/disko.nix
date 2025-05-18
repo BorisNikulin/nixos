@@ -273,11 +273,11 @@
             };
             "encrypted/share/public" = {
               type = "zfs_fs";
-              mountpoint = "/mnt/main/share2/public";
+              mountpoint = "/mnt/main/share/public";
             };
             "encrypted/share/public-write" = {
               type = "zfs_fs";
-              mountpoint = "/mnt/main/share2/public-write";
+              mountpoint = "/mnt/main/share/public-write";
               options = {
                 refquota = "1T";
               };
