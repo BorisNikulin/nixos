@@ -178,7 +178,15 @@
             xattr = "sa";
             compression = "lz4";
           };
-          datasets = {
+          datasets = let
+            mkAppDataset = appName: {
+              "encrypted/app/${appName}" = {
+                type = "zfs_fs";
+                mountpoint = "/mnt/fast/app/${appName}";
+              };
+            };
+          in
+          {
             encrypted = {
               type = "zfs_fs";
               options = {
@@ -210,10 +218,6 @@
               type = "zfs_fs";
               mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
             };
-            "encrypted/app/jellyfin" = {
-              type = "zfs_fs";
-              mountpoint = "/mnt/fast/app/jellyfin";
-            };
             game = {
               type = "zfs_volume";
               size = "1T";
@@ -225,7 +229,12 @@
               #   format = "ntfs";
               # };
             };
-          };
+          }
+          // mkAppDataset "jellyfin"
+          // mkAppDataset "qbittorent"
+          // mkAppDataset "prowlarr"
+          // mkAppDataset "radarr"
+          // mkAppDataset "sonarr";
         };
 
         main = {
