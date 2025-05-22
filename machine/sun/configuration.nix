@@ -37,7 +37,7 @@
 
   services.zfs.autoScrub = {
     enable = true;
-    interval = " *-*-1,15 8:*:*";
+    interval = " *-*-1,15 08:00:00";
     randomizedDelaySec = "1h";
   };
 
@@ -130,8 +130,8 @@
     enable = true;
     openFirewall = true;
     group = "media";
-    dataDir = config.disko.devices.zpool.fast."encrypted/app/jellyfin".mountpoint;
-    cacheDir = config.disko.devices.zpool.fast."encrypted/app/jellyfin".mountpoint;
+    dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".mountpoint;
+    cacheDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".mountpoint + "/cache";
   };
 
   networking.hostName = "sun";
@@ -179,6 +179,7 @@
   };
 
   users.groups.media = { };
+  users.groups.apps = { };
 
   users.users.main = {
     isNormalUser = true;
