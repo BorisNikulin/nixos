@@ -218,6 +218,10 @@
               type = "zfs_fs";
               mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
             };
+            "encrypted/app/prowlarr" = {
+              type = "zfs_fs";
+              mountpoint = "/var/lib/prowlarr";
+            };
             game = {
               type = "zfs_volume";
               size = "1T";
@@ -232,7 +236,6 @@
           }
           // mkAppDataset "jellyfin"
           // mkAppDataset "qbittorent"
-          // mkAppDataset "prowlarr"
           // mkAppDataset "radarr"
           // mkAppDataset "sonarr";
         };
