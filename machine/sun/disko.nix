@@ -218,10 +218,11 @@
               type = "zfs_fs";
               mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
             };
-            # "encrypted/app/prowlarr" = {
-            #   type = "zfs_fs";
-            #   mountpoint = "/var/lib/prowlarr";
-            # };
+            "encrypted/app/prowlarr" = {
+              type = "zfs_fs";
+              # Uses systemd DynamicUser which sandboxes under /var/lib/private
+              mountpoint = "/var/lib/private/prowlarr";
+            };
             game = {
               type = "zfs_volume";
               size = "1T";
