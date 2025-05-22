@@ -126,6 +126,13 @@
   };
   networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
 
+  services.servarr = {
+        enable = true;
+        openFirewall = true;
+        group = "media";
+        parentDataDir = "/mnt/fast/app";
+  };
+
   services.jellyfin = {
     enable = true;
     openFirewall = true;

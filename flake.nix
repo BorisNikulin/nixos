@@ -43,6 +43,7 @@
           ./machine/sun/configuration.nix
 
           ./nixosModules/postfix
+          ./nixosModules/servarr
         ];
       };
 
