@@ -302,27 +302,6 @@
                 refquota = "1T";
               };
             };
-            share = {
-              type = "zfs_fs";
-              mountpoint = "/mnt/main/share-bak";
-              options = {
-                casesensitivity = "insensitive";
-                acltype = "nfsv4";
-                aclmode = "restricted";
-                atime = "on";
-              };
-            };
-            "share/public" = {
-              type = "zfs_fs";
-              mountpoint = "/mnt/main/share-bak/public";
-            };
-            "share/public-write" = {
-              type = "zfs_fs";
-              mountpoint = "/mnt/main/share-bak/public-write";
-              options = {
-                refquota = "1T";
-              };
-            };
             media = {
               type = "zfs_fs";
               mountpoint = "/mnt/main/media";
