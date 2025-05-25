@@ -149,6 +149,11 @@
   networking.nftables.enable = true;
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
+  networking.protonWireguard.qb = {
+    enable = true;
+    privateKeyFile = config.sops.secrets."proton/qb".path;
+  };
+
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 

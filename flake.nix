@@ -44,6 +44,7 @@
 
           ./nixosModules/postfix
           ./nixosModules/servarr
+          ./nixosModules/protonVpn
         ];
       };
 

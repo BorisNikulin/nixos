@@ -14,7 +14,7 @@ in
       };
 
     parentDataDir = lib.mkOption {
-        type = lib.types.str;
+        type = lib.types.path;
         description = "The parent directory under which the servarr apps will create their own directories";
       };
 
@@ -31,6 +31,10 @@ in
       prowlarr = {
         enable = true;
         openFirewall = cfg.openFirewall;
+      };
+
+      flaresolverr = {
+        enable = true;
       };
 
       radarr = {
