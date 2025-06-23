@@ -47,6 +47,9 @@
       "media" = {
         "path" = config.disko.devices.zpool.main.datasets.media.mountpoint;
         "force group" = "media";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
       };
     };
   };
