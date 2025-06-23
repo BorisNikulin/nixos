@@ -207,6 +207,13 @@
                 atime = "on";
               };
             };
+            "encrypted/download" = {
+              type = "zfs_fs";
+              mountpoint = "/mnt/fast/download";
+              options = {
+                recordsize = "1M";
+              };
+            };
             "encrypted/app" = {
               type = "zfs_fs";
               options = {
