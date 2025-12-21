@@ -33,8 +33,8 @@ in
           peers = [
             {
               publicKey = "MkUR6S5ObCzMx0ZToukggFecdUEjEM2GU/ZhLoz2ICY=";
-              # allowedIPs = [ "0.0.0.0/0" "::/6" ];
-              allowedIPs = [];
+              allowedIPs = [ "0.0.0.0/0" "::/6" ];
+              # allowedIPs = [];
               endpoint = "149.102.254.65:51820";
               # Keep NAT tables alive
               persistentKeepalive = 30;
