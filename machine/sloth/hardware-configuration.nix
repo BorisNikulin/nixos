@@ -28,12 +28,9 @@
   boot.extraModulePackages = [ ];
 
   hardware.graphics.extraPackages = with pkgs; [
-    amdvlk
     # OpenCL
     rocmPackages.clr.icd
   ];
-  # For 32 bit applications
-  hardware.graphics.extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
