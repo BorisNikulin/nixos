@@ -55,8 +55,10 @@
   programs.git = {
     enable = true;
 
-    userName = "Boris Nikulin";
-    userEmail = "NikulinBE@gmail.com";
+    settings.user = {
+      name = "Boris Nikulin";
+      email = "NikulinBE@gmail.com";
+    };
     signing = {
       key = "756B53520F832A2C53B1509D218C4D957DFFFB72";
       signByDefault = true;
