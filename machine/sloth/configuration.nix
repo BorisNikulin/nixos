@@ -122,6 +122,7 @@
     extraGroups = [
       "wheel"
       "plugdev"
+      "dialout"
     ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };

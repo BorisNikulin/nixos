@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ...}:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.servarr;
 in
@@ -13,7 +18,7 @@ in
         description = "Group under which Radarr runs.";
       };
 
-    parentDataDir = lib.mkOption {
+      parentDataDir = lib.mkOption {
         type = lib.types.path;
         description = "The parent directory under which the servarr apps will create their own directories";
       };

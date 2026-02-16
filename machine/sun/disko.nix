@@ -178,74 +178,75 @@
             xattr = "sa";
             compression = "lz4";
           };
-          datasets = let
-            mkAppDataset = appName: {
-              "encrypted/app/${appName}" = {
+          datasets =
+            let
+              mkAppDataset = appName: {
+                "encrypted/app/${appName}" = {
+                  type = "zfs_fs";
+                  mountpoint = "/mnt/fast/app/${appName}";
+                };
+              };
+            in
+            {
+              encrypted = {
                 type = "zfs_fs";
-                mountpoint = "/mnt/fast/app/${appName}";
+                options = {
+                  mountpoint = "none";
+                  canmount = "off";
+                  encryption = "aes-256-gcm";
+                  keyformat = "hex";
+                  keylocation = "file:///etc/zfs/key/fast/encrypted.hex";
+                  # Use to bootstrap initial creation during install when root does not exist
+                  # keyformat = "passphrase";
+                  # keylocation = "prompt";
+                };
               };
-            };
-          in
-          {
-            encrypted = {
-              type = "zfs_fs";
-              options = {
-                mountpoint = "none";
-                canmount = "off";
-                encryption = "aes-256-gcm";
-                keyformat = "hex";
-                keylocation = "file:///etc/zfs/key/fast/encrypted.hex";
-                # Use to bootstrap initial creation during install when root does not exist
-                # keyformat = "passphrase";
-                # keylocation = "prompt";
+              "encrypted/share" = {
+                type = "zfs_fs";
+                mountpoint = "/mnt/fast/share";
+                options = {
+                  atime = "on";
+                };
               };
-            };
-            "encrypted/share" = {
-              type = "zfs_fs";
-              mountpoint = "/mnt/fast/share";
-              options = {
-                atime = "on";
+              "encrypted/download" = {
+                type = "zfs_fs";
+                mountpoint = "/mnt/fast/download";
+                options = {
+                  recordsize = "1M";
+                };
               };
-            };
-            "encrypted/download" = {
-              type = "zfs_fs";
-              mountpoint = "/mnt/fast/download";
-              options = {
-                recordsize = "1M";
+              "encrypted/app" = {
+                type = "zfs_fs";
+                options = {
+                  mountpoint = "none";
+                  canmount = "off";
+                };
               };
-            };
-            "encrypted/app" = {
-              type = "zfs_fs";
-              options = {
-                mountpoint = "none";
-                canmount = "off";
+              "encrypted/app/prometheus" = {
+                type = "zfs_fs";
+                mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
               };
-            };
-            "encrypted/app/prometheus" = {
-              type = "zfs_fs";
-              mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
-            };
-            "encrypted/app/prowlarr" = {
-              type = "zfs_fs";
-              # Uses systemd DynamicUser which sandboxes under /var/lib/private
-              mountpoint = "/var/lib/private/prowlarr";
-            };
-            game = {
-              type = "zfs_volume";
-              size = "1T";
-              options = {
-                volblocksize = "128K";
+              "encrypted/app/prowlarr" = {
+                type = "zfs_fs";
+                # Uses systemd DynamicUser which sandboxes under /var/lib/private
+                mountpoint = "/var/lib/private/prowlarr";
               };
-              # content = {
-              #   type = "filesystem";
-              #   format = "ntfs";
-              # };
-            };
-          }
-          // mkAppDataset "jellyfin"
-          // mkAppDataset "qbittorent"
-          // mkAppDataset "radarr"
-          // mkAppDataset "sonarr";
+              game = {
+                type = "zfs_volume";
+                size = "1T";
+                options = {
+                  volblocksize = "128K";
+                };
+                # content = {
+                #   type = "filesystem";
+                #   format = "ntfs";
+                # };
+              };
+            }
+            // mkAppDataset "jellyfin"
+            // mkAppDataset "qbittorent"
+            // mkAppDataset "radarr"
+            // mkAppDataset "sonarr";
         };
 
         main = {
