@@ -21,8 +21,9 @@
         owner = config.services.postfix.user;
         restartUnits = [ config.systemd.services.postfix.name ];
       };
-      "proton/qb" = /*lib.mkIf config.networking.protonWireguard.qb.enable*/ {
-      };
+      "proton/qb" = # lib.mkIf config.networking.protonWireguard.qb.enable
+        {
+        };
     };
   };
 }
