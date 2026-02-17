@@ -15,6 +15,7 @@
     ./hardware-configuration.nix
     ./share/iscsi.nix
     ./share/smb.nix
+    ./tmp-matrix-setup.nix
   ];
 
   nix.settings.experimental-features = [

@@ -24,6 +24,8 @@
       "proton/qb" = # lib.mkIf config.networking.protonWireguard.qb.enable
         {
         };
+      "cloudflare/dns_api_token" = lib.mkIf config.security.acme.acceptTerms {
+      };
     };
   };
 }
