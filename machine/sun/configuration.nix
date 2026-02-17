@@ -128,7 +128,7 @@
   networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
 
   services.servarr = {
-    enable = true;
+    # enable = true;
     openFirewall = true;
     group = "media";
     parentDataDir = "/mnt/fast/app";
@@ -151,7 +151,7 @@
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   networking.protonWireguard.qb = {
-    enable = true;
+    # enable = true;
     privateKeyFile = config.sops.secrets."proton/qb".path;
   };
 
