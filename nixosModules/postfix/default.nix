@@ -25,9 +25,8 @@ in
   config = lib.mkIf cfg.enable {
     services.postfix = {
       enable = true;
-      relayHost = "smtp.gmail.com";
-      relayPort = 587;
-      config = {
+      settings.main = {
+        relayhost = [ "[smtp.gmail.com]:587" ];
         smtp_use_tls = "yes";
         smtp_sasl_auth_enable = "yes";
         smtp_sasl_security_options = "";
