@@ -232,13 +232,11 @@
                 # Uses systemd DynamicUser which sandboxes under /var/lib/private
                 mountpoint = "/var/lib/private/prowlarr";
               };
-              /*
               "encrypted/app/continuwuity" = {
                 type = "zfs_fs";
                 # Uses systemd DynamicUser which sandboxes under /var/lib/private
                 mountpoint = "/var/lib/private/continuwuity";
               };
-              */
               game = {
                 type = "zfs_volume";
                 size = "1T";
