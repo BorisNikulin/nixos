@@ -10,6 +10,7 @@
     firefox
     tree
     vesktop
+    element-desktop
     flameshot
 
     yubikey-personalization
