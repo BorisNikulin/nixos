@@ -64,12 +64,57 @@ in
     enable = true;
     settings = {
       global = {
-        server_name = "matrix.${domain}";
-        allow_registration = true;
-        registration_token = "1234567890";
+        server_name = "${domain}";
+        allow_registration = false;
         allow_encryption = true;
         allow_federation = true;
         trusted_servers = [ "matrix.org" ];
+      };
+    };
+  };
+
+  # TODO: reevaluate
+  nixpkgs.config.permittedInsecurePackages = [
+    "olm-3.2.16"
+  ];
+
+  services.mautrix-discord = {
+    enable = true;
+    dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/mautrix-discord".mountpoint;
+    settings = {
+      homeserver = {
+        domain = "${domain}";
+        address = "https://matrix.${domain}";
+      };
+      appservice = {
+        database = {
+          type = "sqlite3-fk-wal";
+          uri = "file:${config.disko.devices.zpool.fast.datasets."encrypted/app/mautrix-discord".mountpoint}/mautrix-discord.db?_txlock=immediate";
+        };
+      };
+      bridge = {
+        permissions = {
+          "@focu5:rhakotis.xyz" = "admin";
+        };
+        backfill = {
+          forward_limits = {
+            initial = {
+              dm = -1;
+              channel = -1;
+              thread = -1;
+            };
+            missed = {
+              dm = -1;
+              channel = -1;
+              thread = -1;
+            };
+          };
+        };
+        encryption = {
+          allow = true;
+          default = true;
+          allow_key_sharing = true;
+        };
       };
     };
   };
