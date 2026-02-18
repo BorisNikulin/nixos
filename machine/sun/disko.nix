@@ -248,6 +248,8 @@
                 # };
               };
             }
+
+            // mkAppDataset "mautrix-discord"
             // mkAppDataset "jellyfin"
             // mkAppDataset "qbittorent"
             // mkAppDataset "radarr"
