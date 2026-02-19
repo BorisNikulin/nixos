@@ -26,6 +26,13 @@
         };
       "cloudflare/dns_api_token" = lib.mkIf config.security.acme.acceptTerms {
       };
+      "mautrix/env" = lib.mkIf config.services.mautrix-discord.enable {
+        owner = config.systemd.services.mautrix-discord.serviceConfig.User;
+        restartUnits = [
+          config.systemd.services.mautrix-discord-registration.name
+          config.systemd.services.mautrix-discord.name
+        ];
+      };
     };
   };
 }

@@ -52,7 +52,6 @@ in
     '';
 
     virtualHosts."matrix.${domain}" = {
-      serverAliases = [ "matrix.${domain}:8448" ];
       useACMEHost = "matrix.${domain}";
       extraConfig = ''
         reverse_proxy http://localhost:6167  
@@ -81,6 +80,7 @@ in
   services.mautrix-discord = {
     enable = true;
     dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/mautrix-discord".mountpoint;
+    environmentFile = config.sops.secrets."mautrix/env".path;
     settings = {
       homeserver = {
         domain = "${domain}";
@@ -94,14 +94,20 @@ in
       };
       bridge = {
         permissions = {
-          "@focu5:rhakotis.xyz" = "admin";
+          "$mxid_me" = "admin";
+          "$mxid_friend1" = "user";
+          "$mxid_friend2" = "user";
+          "$mxid_friend3" = "user";
+        };
+        double_puppet_server_map = {
+          "${domain}" = "$double_puppet_as_token";
         };
         backfill = {
           forward_limits = {
             initial = {
-              dm = -1;
-              channel = -1;
-              thread = -1;
+              dm = 1000000;
+              channel = 1000000;
+              thread = 1000;
             };
             missed = {
               dm = -1;
