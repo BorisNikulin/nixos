@@ -10,7 +10,7 @@ in
     certs."${domain}" = {
       group = config.services.caddy.group;
 
-      domain = "${domain}";
+      inherit domain;
       extraDomainNames = [
         "*.${domain}"
       ];
@@ -63,11 +63,33 @@ in
     enable = true;
     settings = {
       global = {
-        server_name = "${domain}";
+        server_name = domain;
         allow_registration = false;
         allow_encryption = true;
         allow_federation = true;
         trusted_servers = [ "matrix.org" ];
+        url_preview_domain_explicit_allowlist = [
+          domain
+          "google.com"
+          "youtube.com"
+          "www.youtube.com"
+          "imgur.com"
+          "i.imgur.com"
+          "puush.me"
+          "amazon.com"
+          "x.com"
+          "reddit.com"
+          "www.reddit.com"
+          "stackoverflow.com"
+          "stackexchange.com"
+          "superuser.com"
+          "github.com"
+          "gitlab.com"
+          "wikipedia.org"
+          "nixos.org"
+          "nixos.wiki"
+          "archlinux.org"
+        ];
       };
     };
   };
@@ -83,7 +105,7 @@ in
     environmentFile = config.sops.secrets."mautrix/env".path;
     settings = {
       homeserver = {
-        domain = "${domain}";
+        inherit domain;
         address = "https://matrix.${domain}";
       };
       appservice = {
