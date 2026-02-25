@@ -253,7 +253,8 @@
             // mkAppDataset "jellyfin"
             // mkAppDataset "qbittorent"
             // mkAppDataset "radarr"
-            // mkAppDataset "sonarr";
+            // mkAppDataset "sonarr"
+            // mkAppDataset "grafana";
         };
 
         main = {
