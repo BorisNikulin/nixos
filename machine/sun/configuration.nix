@@ -123,8 +123,76 @@
           }
         ];
       }
+      {
+        job_name = "caddy";
+        scrape_interval = "15s";
+        static_configs = [
+          {
+            targets = [ "localhost:2019" ];
+          }
+        ];
+      }
+      {
+        job_name = "airgradient_bedroom";
+        scrape_interval = "30s";
+        static_configs = [
+          {
+            targets = [ "bedroom.airgradient.home.arpa" ];
+          }
+        ];
+      }
     ];
   };
+
+  services.grafana = {
+    enable = true;
+    dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/grafana".mountpoint;
+    settings = {
+      server = {
+        enable_gzip = true;
+
+        # Alternatively, if you want to serve Grafana from a subpath:
+        # domain = "your.domain";
+        # root_url = "https://your.domain/grafana/";
+        # serve_from_sub_path = true;
+      };
+
+      analytics.reporting_enabled = false;
+    };
+    provision = {
+      enable = true;
+
+      # Creates a *mutable* dashboard provider, pulling from /etc/grafana-dashboards.
+      # With this, you can manually provision dashboards from JSON with `environment.etc` like below.
+      dashboards.settings.providers = [{
+        name = "Dashboards";
+        disableDeletion = true;
+        options = {
+          path = "/etc/grafana-dashboards";
+          foldersFromFilesStructure = true;
+        };
+      }];
+
+      datasources.settings.datasources = [
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://${config.services.prometheus.listenAddress}:${toString config.services.prometheus.port}";
+          isDefault = true;
+          editable = false;
+        }
+      ];
+
+      # Note: removing attributes from the above `datasources.settings.datasources` is not currently enough for them to be deleted;
+      # One needs to use the following option:
+      # datasources.settings.deleteDatasources = [ { name = "foo"; orgId = 1; } { name = "bar"; orgId = 1; } ];
+    };
+  };
+
+
+  # see `dashboards.settings.providers` above
+  environment.etc."grafana-dashboards/airgradient.json".source = ./grafana-dashboards/airgradient.json;
+
   networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
 
   services.servarr = {

@@ -32,6 +32,13 @@ in
   services.caddy = {
     enable = true;
 
+    globalConfig = ''
+      metrics {
+        per_host
+      }
+    '';
+
+
     virtualHosts."${domain}".extraConfig = ''
       handle /.well-known/matrix/server {
         respond `{"m.server": "matrix.${domain}:443"}`
