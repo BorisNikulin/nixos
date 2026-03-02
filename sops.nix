@@ -26,6 +26,10 @@
         };
       "cloudflare/dns_api_token" = lib.mkIf config.security.acme.acceptTerms {
       };
+      "grafana/secret_key" = lib.mkIf config.services.grafana.enable {
+        owner = config.systemd.services.grafana.serviceConfig.User;
+        restartUnits = [ config.systemd.services.grafana.name ];
+      };
       "mautrix/env" = lib.mkIf config.services.mautrix-discord.enable {
         owner = config.systemd.services.mautrix-discord.serviceConfig.User;
         restartUnits = [

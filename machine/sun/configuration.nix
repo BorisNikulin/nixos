@@ -144,11 +144,29 @@
     ];
   };
 
+  services.caddy = {
+    virtualHosts."grafana.rhakotis.xyz" = {
+      useACMEHost = "rhakotis.xyz";
+      extraConfig = ''
+        reverse_proxy http://localhost:${toString config.services.grafana.settings.server.http_port}  
+      '';
+    };
+  };
+
   services.grafana = {
     enable = true;
     dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/grafana".mountpoint;
+    openFirewall = true;
+
     settings = {
+      security = {
+        secret_key = "$__file{${config.sops.secrets."grafana/secret_key".path}}";
+      };
       server = {
+        http_addr = "0.0.0.0";
+        http_port = 3000;
+        domain = "grafana.rhakotis.xyz";
+
         enable_gzip = true;
 
         # Alternatively, if you want to serve Grafana from a subpath:
