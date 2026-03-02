@@ -236,6 +236,11 @@
                 # Uses systemd DynamicUser which sandboxes under /var/lib/private
                 mountpoint = "/var/lib/private/continuwuity";
               };
+              "encrypted/app/lldap" = {
+                type = "zfs_fs";
+                # Uses systemd DynamicUser which sandboxes under /var/lib/private
+                mountpoint = "/var/lib/private/lldap";
+              };
               game = {
                 type = "zfs_volume";
                 size = "1T";
