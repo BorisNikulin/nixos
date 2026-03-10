@@ -75,18 +75,18 @@ in
         allow_encryption = true;
         allow_federation = true;
         trusted_servers = [ "matrix.org" ];
+        # also allow sub domains
+        url_preview_check_root_domain = true;
         url_preview_domain_explicit_allowlist = [
           domain
           "google.com"
           "youtube.com"
-          "www.youtube.com"
+          "youtu.be"
           "imgur.com"
-          "i.imgur.com"
           "puush.me"
           "amazon.com"
           "x.com"
           "reddit.com"
-          "www.reddit.com"
           "stackoverflow.com"
           "stackexchange.com"
           "superuser.com"
@@ -96,6 +96,13 @@ in
           "nixos.org"
           "nixos.wiki"
           "archlinux.org"
+          "xkcd.com"
+          "duckduckgo.com"
+          "microsoft.com"
+          "cppreference.com"
+          "man7.org"
+          "matrix.org"
+          "continuwuity.org"
         ];
       };
     };
