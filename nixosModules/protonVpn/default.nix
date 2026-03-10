@@ -49,29 +49,29 @@ in
           };
     */
     /*
-    networking.wireguard = {
-      enable = true;
-      interfaces = {
-        wg0 = {
-          ips = [ "10.2.0.2/32" ];
-          listenPort = 51820;
-          privateKeyFile = cfg.qb.privateKeyFile;
+      networking.wireguard = {
+        enable = true;
+        interfaces = {
+          wg0 = {
+            ips = [ "10.2.0.2/32" ];
+            listenPort = 51820;
+            privateKeyFile = cfg.qb.privateKeyFile;
 
-          peers = [
-            {
-              name = "ProtonVPN";
-              publicKey = "MkUR6S5ObCzMx0ZToukggFecdUEjEM2GU/ZhLoz2ICY=";
-              allowedIPs = [
-                "0.0.0.0/0"
-                "::/6"
-              ];
-              endpoint = "149.102.254.65:51820";
-              persistentKeepalive = 30;
-            }
-          ];
+            peers = [
+              {
+                name = "ProtonVPN";
+                publicKey = "MkUR6S5ObCzMx0ZToukggFecdUEjEM2GU/ZhLoz2ICY=";
+                allowedIPs = [
+                  "0.0.0.0/0"
+                  "::/6"
+                ];
+                endpoint = "149.102.254.65:51820";
+                persistentKeepalive = 30;
+              }
+            ];
+          };
         };
       };
-    };
     */
   };
 }

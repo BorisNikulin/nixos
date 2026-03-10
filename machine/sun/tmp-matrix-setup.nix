@@ -38,7 +38,6 @@ in
       }
     '';
 
-
     virtualHosts."${domain}".extraConfig = ''
       handle /.well-known/matrix/server {
         respond `{"m.server": "matrix.${domain}:443"}`
@@ -125,7 +124,9 @@ in
       appservice = {
         database = {
           type = "sqlite3-fk-wal";
-          uri = "file:${config.disko.devices.zpool.fast.datasets."encrypted/app/mautrix-discord".mountpoint}/mautrix-discord.db?_txlock=immediate";
+          uri = "file:${
+            config.disko.devices.zpool.fast.datasets."encrypted/app/mautrix-discord".mountpoint
+          }/mautrix-discord.db?_txlock=immediate";
         };
       };
       bridge = {

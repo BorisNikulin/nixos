@@ -167,30 +167,31 @@
   # TODO: Submit PR to add user and group creation to (see memcached.nix for example)
   # https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/lldap.nix
   users.users.lldap = {
-      description = "lldap server user";
-      isSystemUser = true;
-      group = "lldap";
-    };
+    description = "lldap server user";
+    isSystemUser = true;
+    group = "lldap";
+  };
   users.groups.lldap = { };
 
   services.lldap = {
     enable = true;
     settings = {
-      ldap_base_dn = "dc=rhakotis,dc=xyz"; 
+      ldap_base_dn = "dc=rhakotis,dc=xyz";
 
       ldap_user_dn = "admin";
       force_ldap_user_pass_reset = "always";
       ldap_user_pass_file = config.sops.secrets."lldap/user_pass".path;
 
-      ldaps_options = let
-        certDir = config.security.acme.certs."ldap.rhakotis.xyz".directory;
-      in
-      {
-        enabled = true;
-        port = 636;
-        cert_file = "${certDir}/cert.pem";
-        key_file = "${certDir}/key.pem";
-      };
+      ldaps_options =
+        let
+          certDir = config.security.acme.certs."ldap.rhakotis.xyz".directory;
+        in
+        {
+          enabled = true;
+          port = 636;
+          cert_file = "${certDir}/cert.pem";
+          key_file = "${certDir}/key.pem";
+        };
     };
   };
   # Allow binding to ports < 1024
@@ -225,14 +226,16 @@
 
       # Creates a *mutable* dashboard provider, pulling from /etc/grafana-dashboards.
       # With this, you can manually provision dashboards from JSON with `environment.etc` like below.
-      dashboards.settings.providers = [{
-        name = "Dashboards";
-        disableDeletion = true;
-        options = {
-          path = "/etc/grafana-dashboards";
-          foldersFromFilesStructure = true;
-        };
-      }];
+      dashboards.settings.providers = [
+        {
+          name = "Dashboards";
+          disableDeletion = true;
+          options = {
+            path = "/etc/grafana-dashboards";
+            foldersFromFilesStructure = true;
+          };
+        }
+      ];
 
       datasources.settings.datasources = [
         {
@@ -250,9 +253,9 @@
     };
   };
 
-
   # see `dashboards.settings.providers` above
-  environment.etc."grafana-dashboards/airgradient.json".source = ./grafana-dashboards/airgradient.json;
+  environment.etc."grafana-dashboards/airgradient.json".source =
+    ./grafana-dashboards/airgradient.json;
 
   networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
 
