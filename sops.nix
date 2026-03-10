@@ -37,6 +37,10 @@
           config.systemd.services.mautrix-discord.name
         ];
       };
+      "lldap/user_pass" = lib.mkIf config.services.lldap.enable {
+        owner = config.systemd.services.lldap.serviceConfig.User;
+        restartUnits = [ config.systemd.services.lldap.name ];
+      };
     };
   };
 }
