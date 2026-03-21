@@ -74,6 +74,8 @@ in
         allow_encryption = true;
         allow_federation = true;
         trusted_servers = [ "matrix.org" ];
+        # 5GiB
+        max_request_size = 5368709120;
         # also allow sub domains
         url_preview_check_root_domain = true;
         url_preview_domain_explicit_allowlist = [
