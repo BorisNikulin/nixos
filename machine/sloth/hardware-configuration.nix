@@ -66,8 +66,8 @@
     ];
   };
 
-  fileSystems."/mnt/share" = {
-    device = "//10.0.0.7/share";
+  fileSystems."/mnt/share-main" = {
+    device = "//10.0.0.7/share-main";
     fsType = "cifs";
     options =
       let
