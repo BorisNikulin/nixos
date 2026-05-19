@@ -196,6 +196,7 @@
   };
   # Allow binding to ports < 1024
   systemd.services.lldap.serviceConfig.AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
+  systemd.services.lldap.serviceConfig.CapabilityBoundingSet = [ "CAP_NET_BIND_SERVICE" ];
 
   services.grafana = {
     enable = true;
