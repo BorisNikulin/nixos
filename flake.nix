@@ -31,6 +31,8 @@
     in
     {
       # NAS
+      # Intel Xeon E3-1280 v3 (8 threads) @ 3.60 GHz
+      # 32 GiB 1600 MT/s DDR3 ECC
       nixosConfigurations.sun = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
@@ -45,6 +47,31 @@
           ./nixosModules/postfix
           ./nixosModules/servarr
           ./nixosModules/protonVpn
+        ];
+      };
+
+      # Desktop
+      # Ryzen 7800X3D
+      # 7900XTX
+      # 32GiB 6000 MT/s CL 30
+      nixosConfigurations.polar = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          sops-nix.nixosModules.sops
+          ./sops.nix
+
+          # TODO: move to standalone
+          nvf.nixosModules.default
+          ./nvf.nix
+
+          # TODO: refactor common configs from sloth
+          ./machine/polar/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.main = import ./machine/sloth/home.nix;
+          }
         ];
       };
 
