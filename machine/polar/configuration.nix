@@ -72,6 +72,9 @@
   # Avoids scaling issues of xwayland.
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
+  # Use wayland directly instead of via XWayland for massive latency decrease
+  environment.sessionVariables.PROTON_ENABLE_WAYLAND = "1";
+
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
