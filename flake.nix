@@ -14,91 +14,86 @@
     nvf.url = "github:notashelf/nvf";
     nvf.inputs.nixpkgs.follows = "nixpkgs";
 
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nixos-hardware,
-      disko,
-      sops-nix,
-      home-manager,
-      nvf,
-    }:
-    let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    in
-    {
-      # NAS
-      # Intel Xeon E3-1280 v3 (8 threads) @ 3.60 GHz
-      # 32 GiB 1600 MT/s DDR3 ECC
-      nixosConfigurations.sun = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          sops-nix.nixosModules.sops
-          ./sops.nix
+    inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" ];
 
-          disko.nixosModules.disko
-          ./machine/sun/disko.nix
+      flake = {
+        # NAS
+        # Intel Xeon E3-1280 v3 (8 threads) @ 3.60 GHz
+        # 32 GiB 1600 MT/s DDR3 ECC
+        nixosConfigurations.sun = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            inputs.sops-nix.nixosModules.sops
+            ./sops.nix
 
-          ./machine/sun/configuration.nix
+            inputs.disko.nixosModules.disko
+            ./machine/sun/disko.nix
 
-          ./nixosModules/postfix
-          ./nixosModules/servarr
-          ./nixosModules/protonVpn
-        ];
+            ./machine/sun/configuration.nix
+
+            ./nixosModules/postfix
+            ./nixosModules/servarr
+            ./nixosModules/protonVpn
+          ];
+        };
+
+        # Desktop
+        # Ryzen 7800X3D
+        # 7900XTX
+        # 32GiB 6000 MT/s CL 30
+        nixosConfigurations.polar = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            inputs.sops-nix.nixosModules.sops
+            ./sops.nix
+
+            # TODO: move to standalone
+            inputs.nvf.nixosModules.default
+            ./nvf.nix
+
+            # TODO: refactor common configs from sloth
+            ./machine/polar/configuration.nix
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.main = import ./machine/sloth/home.nix;
+            }
+          ];
+        };
+
+        # Framework 16 laptop
+        # Ryzen 7840HS with 780M radeon iGPU
+        # 32GiB 5600 MT/s
+        nixosConfigurations.sloth = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            inputs.nixos-hardware.nixosModules.framework-16-7040-amd
+            inputs.sops-nix.nixosModules.sops
+
+            # TODO: move to standalone
+            inputs.nvf.nixosModules.default
+            ./nvf.nix
+
+            ./machine/sloth/configuration.nix
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.main = import ./machine/sloth/home.nix;
+            }
+          ];
+        };
       };
 
-      # Desktop
-      # Ryzen 7800X3D
-      # 7900XTX
-      # 32GiB 6000 MT/s CL 30
-      nixosConfigurations.polar = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          sops-nix.nixosModules.sops
-          ./sops.nix
-
-          # TODO: move to standalone
-          nvf.nixosModules.default
-          ./nvf.nix
-
-          # TODO: refactor common configs from sloth
-          ./machine/polar/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.main = import ./machine/sloth/home.nix;
-          }
-        ];
+      perSystem = { pkgs, ... }: {
+        formatter = pkgs.nixfmt-tree;
       };
-
-      # Framework 16 laptop
-      # Ryzen 7840HS with 780M radeon iGPU
-      # 32GiB 5600 MT/s
-      nixosConfigurations.sloth = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          nixos-hardware.nixosModules.framework-16-7040-amd
-          sops-nix.nixosModules.sops
-          ./sops.nix
-
-          # TODO: move to standalone
-          nvf.nixosModules.default
-          ./nvf.nix
-
-          ./machine/sloth/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.main = import ./machine/sloth/home.nix;
-          }
-        ];
-      };
-
-      formatter.x86_64-linux = pkgs.nixfmt-tree;
     };
 }
