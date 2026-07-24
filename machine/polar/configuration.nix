@@ -24,7 +24,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-
   networking.hostName = "polar";
   # hostId derived from systemd machine-id; head -c 8 /etc/machine-id
   networking.hostId = "9111466e";
