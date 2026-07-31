@@ -15,7 +15,9 @@
       yubikey
       neovim
 
-      plasma
+      # plasma
+      niri
+
       games
 
       mainUser
@@ -46,6 +48,7 @@
       vim
       wget
       git
+      btop-rocm
     ];
 
     system.stateVersion = "26.05";

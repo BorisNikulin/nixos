@@ -28,6 +28,10 @@
     home.packages = with pkgs; [
       firefox
       tree
+      # May need to manually start once to set keyring to non basic if on uncommon DE like niri.
+      # element-desktop --password-store="gnome-libsecret"
+      # https://discourse.nixos.org/t/element-desktop-no-longer-working-with-nixos-25-05-on-a-minimal-desktop-i3-or-xterm-due-to-unsupported-keyring/69731/5
+      # https://github.com/electron/electron/issues/39789
       element-desktop
       flameshot
 
