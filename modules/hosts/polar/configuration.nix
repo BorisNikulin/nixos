@@ -12,7 +12,9 @@
       fonts
       audio
 
+      moonlander
       yubikey
+
       neovim
 
       # plasma
@@ -20,13 +22,16 @@
 
       games
 
+      # ollama
+
       mainUser
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
-        home-manager.sharedModules = [
-          self.homeModules.yubikey
+        home-manager.sharedModules = with self.homeModules; [
+          niri
+          yubikey
         ];
         home-manager.users.main = self.homeModules.main;
       }

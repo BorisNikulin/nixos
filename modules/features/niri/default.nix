@@ -38,15 +38,7 @@
       # TODO: export own wrapped packages as needed.
       #  Quickshell for all?
       environment.systemPackages = with pkgs; [
-        alacritty
-        fuzzel
-        swaylock
-        mako
-        swayidle
-
         xwayland-satellite
-
-        seahorse # gnome keyring gui
       ];
 
     }
@@ -69,24 +61,29 @@
     }
   );
 
-  # flake.wrappers.niri = { pkgs, wlib, ... }: {
-  #   imports = [ wlib.wrapperModules.niri ];
-  #
-  #   niri = inputs.nixpkgs-master.legacyPackages.${system}.niri;
-  #
-  #   # settings = {
-  #   # };
-  # };
+  flake.homeModules.niri = { pkgs, lib, ... }: {
+    home.packages = with pkgs; [
+      alacritty
+      fuzzel
+      swaylock
+      mako
+      swayidle
 
-  perSystem =
-    {
-      self',
-      inputs',
-      pkgs,
-      ...
-    }:
-    {
-      # packages.aniri = pkgs.niri;
+      seahorse # gnome keyring gui
+    ];
 
+    # Writes a .../default/index.theme with name Default
+    # that points to the cursor theme.
+    # This stable name/path is used in niri's cursor config.
+    home.pointerCursor = {
+      enable = true;
+      x11.enable = true;
+      gtk.enable = true;
+      # There is a hypercursor backend but no niri.
+      # niri only accepts "cursor" block configs in it's config proper.
+
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Original-Classic";
     };
+  };
 }

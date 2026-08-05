@@ -3,6 +3,13 @@
 // Check the wiki for a full description of the configuration:
 // https://niri-wm.github.io/niri/Configuration:-Introduction
 
+cursor {
+    // created via homemanager home.pointerCursor
+    xcursor-theme "default"
+    // doesn't work
+    // xcursor-theme "$XCURSOR_THEME"
+}
+
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://niri-wm.github.io/niri/Configuration:-Input
@@ -30,6 +37,12 @@ output "DP-1" {
     mode "3440x1440@164.900"
     scale 1
     variable-refresh-rate on-demand=true
+}
+
+prefer-no-csd
+
+overview {
+    zoom 0.25
 }
 
 // Settings that influence how windows are positioned and sized.
@@ -261,17 +274,57 @@ window-rule {
     open-floating true
 }
 
-// Example: block out two password managers from screen capture.
-// (This example rule is commented out with a "/-" in front.)
-/-window-rule {
+window-rule {
+    match app-id=r#"^com.yubico.yubioath$"#
+
+    // 99% of the time I just want to generate a TOTP for another window/browser
+    open-floating true
+}
+
+window-rule {
+    // For bitwarden pop out extension and anything potentially similar.
+    // Eg.
+    // Title: "Extension: (Bitwarden Password Manager) - Bitwarden — Mozilla Firefox"
+    // App ID: "firefox"
+    match title=r#"[Pp]assword [Mm]anager"#
     match app-id=r#"^org\.keepassxc\.KeePassXC$"#
     match app-id=r#"^org\.gnome\.World\.Secrets$"#
 
-    block-out-from "screen-capture"
+    // yubikey manager and TOTP via yubikey impl app
+    match app-id=r#"^com.yubico.yubioath$"#
 
-    // Use this instead if you want them visible on third-party screenshot tools.
-    // block-out-from "screencast"
+    // gnome gui secrets/keyring manager
+    match app-id=r#"^org.gnome.seahorse.Application$"#
+
+    // gnome gpg gui pin entry
+    match app-id="gcr-prompter"
+
+    block-out-from "screen-capture"
 }
+
+// Indicate screencasted windows with red colors.
+window-rule {
+    match is-window-cast-target=true
+
+    focus-ring {
+        active-color "#f38ba8"
+        inactive-color "#7d0d2d"
+    }
+
+    border {
+        inactive-color "#7d0d2d"
+    }
+
+    shadow {
+        color "#7d0d2d70"
+    }
+
+    tab-indicator {
+        active-color "#f38ba8"
+        inactive-color "#7d0d2d"
+    }
+}
+
 
 // Example: enable rounded corners for all windows.
 // (This example rule is commented out with a "/-" in front.)
@@ -565,4 +618,4 @@ binds {
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
 }
-prefer-no-csd
+
