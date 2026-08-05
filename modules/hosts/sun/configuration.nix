@@ -24,6 +24,9 @@
 
         postfix
 
+        domain
+        certs
+        caddy
         matrixHomeServer
       ];
 
@@ -123,15 +126,6 @@
             static_configs = [
               {
                 targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
-              }
-            ];
-          }
-          {
-            job_name = "caddy";
-            scrape_interval = "15s";
-            static_configs = [
-              {
-                targets = [ "localhost:2019" ];
               }
             ];
           }

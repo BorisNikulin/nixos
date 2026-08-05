@@ -1,66 +1,35 @@
 { self, inputs, ... }: {
   flake.nixosModules.matrixHomeServer =
     { pkgs, config, ... }:
-    let
-      domain = "rhakotis.xyz";
-    in
     {
       security.acme = {
-        acceptTerms = true;
-        defaults.email = "NikulinBE@gmail.com";
-
-        certs."${domain}" = {
-          group = config.services.caddy.group;
-
-          inherit domain;
-          extraDomainNames = [
-            "*.${domain}"
-          ];
-          dnsProvider = "cloudflare";
-          dnsPropagationCheck = true;
-          environmentFile = config.sops.secrets."cloudflare/dns_api_token".path;
-        };
-
-        certs."matrix.${domain}" = {
-          group = config.services.caddy.group;
-
-          domain = "matrix.${domain}";
-          dnsProvider = "cloudflare";
-          dnsPropagationCheck = true;
-          environmentFile = config.sops.secrets."cloudflare/dns_api_token".path;
+        certs."matrix.${config.domain}" = {
+          domain = "matrix.${config.domain}";
         };
       };
 
       services.caddy = {
-        enable = true;
+        virtualHosts."${config.domain}" = {
+          extraConfig = ''
+            handle /.well-known/matrix/server {
+              respond `{"m.server": "matrix.${config.domain}:443"}`
+              header Content-Type application/json
+            }
 
-        globalConfig = ''
-          metrics {
-            per_host
-          }
-        '';
+            handle /.well-known/matrix/client {
+              respond `{"m.homeserver":{"base_url":"https://matrix.${config.domain}"}}`
+              header Content-Type application/json
+              header Access-Control-Allow-Origin *
+            }
 
-        virtualHosts."${domain}".extraConfig = ''
-          handle /.well-known/matrix/server {
-            respond `{"m.server": "matrix.${domain}:443"}`
-            header Content-Type application/json
-          }
+            log_skip /.well-known*
 
-          handle /.well-known/matrix/client {
-            respond `{"m.homeserver":{"base_url":"https://matrix.${domain}"}}`
-            header Content-Type application/json
-            header Access-Control-Allow-Origin *
-          }
+          '';
+          useACMEHost = config.certs.wildcard.acmeHost;
+        };
 
-          log_skip /.well-known*
-
-          tls /var/lib/acme/${domain}/cert.pem /var/lib/acme/${domain}/key.pem {
-            protocols tls1.3
-          }
-        '';
-
-        virtualHosts."matrix.${domain}" = {
-          useACMEHost = "matrix.${domain}";
+        virtualHosts."matrix.${config.domain}" = {
+          useACMEHost = "matrix.${config.domain}";
           extraConfig = ''
             reverse_proxy http://localhost:6167  
           '';
@@ -71,7 +40,7 @@
         enable = true;
         settings = {
           global = {
-            server_name = domain;
+            server_name = config.domain;
             allow_registration = false;
             allow_encryption = true;
             allow_federation = true;
@@ -81,7 +50,7 @@
             # also allow sub domains
             url_preview_check_root_domain = true;
             url_preview_domain_explicit_allowlist = [
-              domain
+              config.domain
               "google.com"
               "youtube.com"
               "youtu.be"
@@ -122,8 +91,8 @@
         environmentFile = config.sops.secrets."mautrix/env".path;
         settings = {
           homeserver = {
-            inherit domain;
-            address = "https://matrix.${domain}";
+            inherit (config) domain;
+            address = "https://matrix.${config.domain}";
           };
           appservice = {
             database = {
@@ -141,7 +110,7 @@
               "$mxid_friend3" = "user";
             };
             double_puppet_server_map = {
-              "${domain}" = "$double_puppet_as_token";
+              "${config.domain}" = "$double_puppet_as_token";
             };
             backfill = {
               forward_limits = {
