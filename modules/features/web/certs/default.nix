@@ -14,7 +14,7 @@
         certs = {
           cloudflareDnsApiTokenPath = lib.mkOption {
             default = config.sops.secrets."cloudflare/dns_api_token".path;
-            type = lib.types.str;
+            type = lib.types.path;
           };
 
           default = {
