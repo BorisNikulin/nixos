@@ -7,6 +7,13 @@
       ...
     }:
     {
+      imports = [
+        inputs.disko-zfs.nixosModules.default
+      ];
+      # Apply zfs changes on nixos-rebuild switch.
+      # Use dry-activate instead of switch to see changes.
+      disko.zfs.enable = true;
+
       disko.devices =
         let
           mkZfsFastDisk = device: {
@@ -144,6 +151,7 @@
                     compression = "zstd";
                   };
                 };
+                # Must create via 'zfs send -w {key@init} | zfs recv {this dataset}' first.
                 "encrypted/key" = {
                   type = "zfs_fs";
                   mountpoint = "/etc/zfs/key";
@@ -254,6 +262,17 @@
                     #   format = "ntfs";
                     # };
                   };
+
+                  backup = {
+                    type = "zfs_fs";
+                  };
+                  # Must create via 'zfs send -w {key@init} | zfs recv {this dataset}' first.
+                  "backup/key" = {
+                    type = "zfs_fs";
+                    options = {
+                      copies = "2";
+                    };
+                  };
                 }
 
                 // mkAppDataset "mautrix-discord"
@@ -325,9 +344,23 @@
                     refquota = "1T";
                   };
                 };
+
                 media = {
                   type = "zfs_fs";
                   mountpoint = "/mnt/main/media";
+                };
+
+                backup = {
+                  type = "zfs_fs";
+                };
+                "backup/key" = {
+                  type = "zfs_fs";
+                  options = {
+                    copies = "2";
+                  };
+                };
+                "encrypted/backup" = {
+                  type = "zfs_fs";
                 };
               };
             };
