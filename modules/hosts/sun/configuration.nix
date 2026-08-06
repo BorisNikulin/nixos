@@ -27,6 +27,7 @@
         domain
         certs
         caddy
+        monitoring
         matrixHomeServer
       ];
 
@@ -99,56 +100,7 @@
           ];
       };
 
-      # https://nixos.org/manual/nixos/stable/#module-services-prometheus-exporters
-      # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/services/monitoring/prometheus/exporters/node.nix
-      services.prometheus.exporters.node = {
-        enable = true;
-        port = 9002;
-        # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/monitoring/prometheus/exporters.nix
-        enabledCollectors = [
-          "systemd"
-          "ethtool"
-        ];
-        # /nix/store/zgsw0yx18v10xa58psanfabmg95nl2bb-node_exporter-1.8.1/bin/node_exporter  --help
-      };
-
-      # https://wiki.nixos.org/wiki/Prometheus
-      # https://nixos.org/manual/nixos/stable/#module-services-prometheus-exporters-configuration
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/monitoring/prometheus/default.nix
-      services.prometheus = {
-        enable = true;
-        port = 9001;
-        stateDir = "prometheus"; # /var/lib/prometheus
-        globalConfig.scrape_interval = "1m";
-        scrapeConfigs = [
-          {
-            job_name = "node";
-            static_configs = [
-              {
-                targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
-              }
-            ];
-          }
-          {
-            job_name = "airgradient_bedroom";
-            scrape_interval = "30s";
-            static_configs = [
-              {
-                targets = [ "bedroom.airgradient.home.arpa" ];
-              }
-            ];
-          }
-        ];
-      };
-
       services.caddy = {
-        virtualHosts."grafana.rhakotis.xyz" = {
-          useACMEHost = "rhakotis.xyz";
-          extraConfig = ''
-            reverse_proxy http://localhost:${toString config.services.grafana.settings.server.http_port}  
-          '';
-        };
-
         virtualHosts."jellyfin.rhakotis.xyz" = {
           useACMEHost = "rhakotis.xyz";
           extraConfig = ''
@@ -201,68 +153,6 @@
       # Allow binding to ports < 1024
       systemd.services.lldap.serviceConfig.AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
       systemd.services.lldap.serviceConfig.CapabilityBoundingSet = [ "CAP_NET_BIND_SERVICE" ];
-
-      services.grafana = {
-        enable = true;
-        dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/grafana".mountpoint;
-        openFirewall = true;
-
-        settings = {
-          security = {
-            secret_key = "$__file{${config.sops.secrets."grafana/secret_key".path}}";
-          };
-          server = {
-            http_addr = "0.0.0.0";
-            http_port = 3000;
-            domain = "grafana.rhakotis.xyz";
-
-            enable_gzip = true;
-
-            # Alternatively, if you want to serve Grafana from a subpath:
-            # domain = "your.domain";
-            # root_url = "https://your.domain/grafana/";
-            # serve_from_sub_path = true;
-          };
-
-          analytics.reporting_enabled = false;
-        };
-        provision = {
-          enable = true;
-
-          # Creates a *mutable* dashboard provider, pulling from /etc/grafana-dashboards.
-          # With this, you can manually provision dashboards from JSON with `environment.etc` like below.
-          # TODO: export fixed airgradient dashboard + node and caddy ones
-          # and configure/upload them here.
-          # dashboards.settings.providers = [
-          #   {
-          #     name = "Dashboards";
-          #     disableDeletion = true;
-          #     options = {
-          #       path = "/etc/grafana-dashboards";
-          #       foldersFromFilesStructure = true;
-          #     };
-          #   }
-          # ];
-
-          datasources.settings.datasources = [
-            {
-              name = "Prometheus";
-              type = "prometheus";
-              url = "http://${config.services.prometheus.listenAddress}:${toString config.services.prometheus.port}";
-              isDefault = true;
-              editable = false;
-            }
-          ];
-
-          # Note: removing attributes from the above `datasources.settings.datasources` is not currently enough for them to be deleted;
-          # One needs to use the following option:
-          # datasources.settings.deleteDatasources = [ { name = "foo"; orgId = 1; } { name = "bar"; orgId = 1; } ];
-        };
-      };
-
-      # see `dashboards.settings.providers` above and the associated TODO
-      # environment.etc."grafana-dashboards/airgradient.json".source =
-      #  ./grafana-dashboards/airgradient.json;
 
       networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
 
@@ -378,7 +268,7 @@
         };
       };
 
-      networking.firewall.enable = false;
+      networking.firewall.enable = true;
 
       system.stateVersion = "26.05";
     };
