@@ -84,6 +84,18 @@
 
       programs.starship = {
         enable = true;
+        presets = [
+          "nerd-font-symbols"
+        ];
+        settings = {
+          nix_shell = {
+            # enable support for nix shell
+            heuristic = true;
+          };
+          memory_usage = {
+            disabled = false;
+          };
+        };
       };
 
       programs.alacritty = {
