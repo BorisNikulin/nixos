@@ -40,16 +40,17 @@
         ];
       };
 
-      fileSystems."/mnt/tmp-game" = {
-        device = "/dev/disk/by-uuid/029b8f67-f049-4022-a3fd-565a4eb45654";
-        fsType = "ext4";
-        options = [
-          "users" # Allows any user to mount and unmount
-          "exec" # Permit execution of binaries and other executable files
-        ];
+      boot.zswap = {
+        enable = true;
+        maxPoolPercent = 25;
       };
 
-      swapDevices = [ ];
+      swapDevices = [
+        {
+          device = "/var/lib/swapfile";
+          size = 32 * 1024; # 32 GiB
+        }
+      ];
 
       hardware.graphics = {
         enable = true;

@@ -12,6 +12,8 @@
       fonts
       audio
 
+      shareGameNvmeOfHost
+
       moonlander
       yubikey
 

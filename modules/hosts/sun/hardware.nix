@@ -24,6 +24,11 @@
       boot.kernelModules = [ "kvm-intel" ];
       boot.extraModulePackages = [ ];
 
+      boot.zswap = {
+        enable = true;
+        maxPoolPercent = 20;
+      };
+
       networking.useDHCP = lib.mkDefault true;
       # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
       # networking.interfaces.eno2.useDHCP = lib.mkDefault true;
