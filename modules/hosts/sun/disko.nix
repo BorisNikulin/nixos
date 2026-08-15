@@ -266,13 +266,6 @@
                   backup = {
                     type = "zfs_fs";
                   };
-                  # Must create via 'zfs send -w {key@init} | zfs recv {this dataset}' first.
-                  "backup/key" = {
-                    type = "zfs_fs";
-                    options = {
-                      copies = "2";
-                    };
-                  };
                 }
 
                 // mkAppDataset "mautrix-discord"
@@ -352,12 +345,6 @@
 
                 backup = {
                   type = "zfs_fs";
-                };
-                "backup/key" = {
-                  type = "zfs_fs";
-                  options = {
-                    copies = "2";
-                  };
                 };
                 "encrypted/backup" = {
                   type = "zfs_fs";
