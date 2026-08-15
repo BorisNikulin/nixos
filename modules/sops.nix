@@ -11,7 +11,8 @@
         "boris/passwordHash" = {
           neededForUsers = true;
         };
-        "share" = { };
+        "share/smb" = { };
+        "share/nvme-of/keyfile" = { };
         "postfix/sasl_password_map" = lib.mkIf config.services.postfix.enable {
           owner = config.services.postfix.user;
           restartUnits = [ config.systemd.services.postfix.name ];
