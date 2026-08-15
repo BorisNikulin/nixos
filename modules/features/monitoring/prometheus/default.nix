@@ -84,7 +84,7 @@
               secret_key = "$__file{${cfg.grafana.secretKeyFile}}";
             };
             server = {
-              http_addr = "localhost";
+              http_addr = "0.0.0.0";
               http_port = 3000;
               domain = "grafana.${config.domain}";
 
