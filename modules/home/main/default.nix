@@ -50,7 +50,6 @@
         # https://discourse.nixos.org/t/element-desktop-no-longer-working-with-nixos-25-05-on-a-minimal-desktop-i3-or-xterm-due-to-unsupported-keyring/69731/5
         # https://github.com/electron/electron/issues/39789
         element-desktop
-        flameshot
 
         mpv
         jellyfin-media-player
@@ -63,6 +62,12 @@
 
         # For kobo desktop for calibre
         wineWow64Packages.stable
+
+        winbox
+
+        # TODO: pick a file manager
+        # Nautilus is default with niri and gnome portal but can be changed
+        nautilus
       ];
 
       # TODO: move away from home manager to nix-wrapper-modules

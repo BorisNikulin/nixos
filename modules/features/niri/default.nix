@@ -55,7 +55,6 @@
     {
       imports = [ wlib.wrapperModules.niri ];
 
-      package = inputs.nixpkgs-stable.legacyPackages.${system}.niri;
       "config.kdl".path = ./config.kdl;
 
     }
