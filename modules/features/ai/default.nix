@@ -4,7 +4,6 @@
     {
       imports = with self.nixosModules; [
         llamaCpp
-        aiHarnessPi
       ];
     };
 }

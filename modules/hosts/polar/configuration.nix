@@ -34,6 +34,7 @@
         home-manager.sharedModules = with self.homeModules; [
           niri
           yubikey
+          aiHarnessPi
         ];
         home-manager.users.main = self.homeModules.main;
       }
