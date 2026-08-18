@@ -24,7 +24,7 @@
 
       games
 
-      # ollama
+      localAi
 
       mainUser
       inputs.home-manager.nixosModules.home-manager
