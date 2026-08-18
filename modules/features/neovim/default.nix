@@ -10,6 +10,11 @@
       settings = {
         vim.viAlias = false;
         vim.vimAlias = true;
+        vim.clipboard = {
+          enable = true;
+          registers = "unnamedplus";
+          providers.wl-copy.enable = true;
+        };
         vim.lsp = {
           enable = true;
         };
