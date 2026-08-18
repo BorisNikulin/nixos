@@ -121,6 +121,27 @@
           key = "756B53520F832A2C53B1509D218C4D957DFFFB72";
           signByDefault = true;
         };
+        extraConfig =
+          let
+            # GPG status icons (Nerd Font):
+            #   G=good        → 󰄬 check (green)
+            #   B=bad         → 󰅖 close (red)
+            #   U=unknown val → 󰄬 check (yellow)
+            #   X=sig expired → 󰥕 clock-alert (red)
+            #   Y=key expired → 󰾨 clock-check (yellow)
+            #   R=revoked     → 󰌊 key-remove (red)
+            #   E=missing key → 󰷖 key-outline (yellow)
+            #   N=no sig      → (blank)
+            # requires " [%G?]" in the format string
+            gpgSed = "sed 's/\\[G\\]/\\x1b[32m󰄬\\x1b[0m/g; s/\\[B\\]/\\x1b[31m󰅖\\x1b[0m/g; s/\\[U\\]/\\x1b[33m󰄬\\x1b[0m/g; s/\\[X\\]/\\x1b[31m󰥕\\x1b[0m/g; s/\\[Y\\]/\\x1b[33m󰾨\\x1b[0m/g; s/\\[R\\]/\\x1b[31m󰌊\\x1b[0m/g; s/\\[E\\]/\\x1b[33m󰷖\\x1b[0m/g; s/ \\[N\\]//g'";
+          in
+          {
+            alias.co = "checkout";
+            alias.graph = "!git log --graph --abbrev-commit --decorate --color=always --format='%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset)%d %C(dim white)%an%C(reset) [%G?]%n%w(120,2,2)%C(white)%s%C(reset)' --all | ${gpgSed} | less -RFX";
+            alias.g = "graph";
+            alias.shortgraph = "!git --no-pager log -20 --graph --abbrev-commit --decorate --color=always --format='%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset)%d %C(dim white)%an%C(reset) [%G?] %C(white)%<(60,trunc)%s%C(reset)' --all | ${gpgSed}";
+            alias.sg = "shortgraph";
+          };
       };
 
       programs.vim = {

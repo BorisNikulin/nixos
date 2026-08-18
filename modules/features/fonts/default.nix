@@ -2,6 +2,14 @@
   flake.nixosModules.fonts = { pkgs, ... }: {
     console.font = "Lat2-Terminus16";
 
+    # Enable Nerd Fonts (PUA characters) in less
+    # https://github.com/ryanoasis/nerd-fonts/wiki/FAQ-and-Troubleshooting#less-settings
+    programs.less.enable = true;
+    programs.less.envVariables = {
+      LESS = "-R -F";
+      LESSUTFCHARDEF = "e000-f8ff:p,f0001-fffff:p";
+    };
+
     fonts = {
       fontDir.enable = true;
 
