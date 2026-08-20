@@ -30,13 +30,6 @@
           owner = config.systemd.services.grafana.serviceConfig.User;
           restartUnits = [ config.systemd.services.grafana.name ];
         };
-        "mautrix/env" = lib.mkIf config.services.mautrix-discord.enable {
-          owner = config.systemd.services.mautrix-discord.serviceConfig.User;
-          restartUnits = [
-            config.systemd.services.mautrix-discord-registration.name
-            config.systemd.services.mautrix-discord.name
-          ];
-        };
         "lldap/user_pass" = lib.mkIf config.services.lldap.enable {
           owner = config.systemd.services.lldap.serviceConfig.User;
           restartUnits = [ config.systemd.services.lldap.name ];

@@ -33,20 +33,6 @@
             type = lib.types.str;
           };
 
-          mautrix.discord = {
-            environmentFile = lib.mkOption {
-              default = config.sops.secrets."mautrix/env".path;
-              type = lib.types.path;
-              description = ''
-                File with env var definitions used by mautrix discord settings.
-                Read definition in this module for vars to define in this file.
-              '';
-            };
-            dataDir = lib.mkOption {
-              default = config.disko.devices.zpool.fast.datasets."encrypted/app/mautrix-discord".mountpoint;
-              type = lib.types.path;
-            };
-          };
         };
       };
 
@@ -256,54 +242,6 @@
           "olm-3.2.16"
         ];
 
-        services.mautrix-discord = {
-          enable = true;
-
-          inherit (cfg.mautrix.discord) dataDir environmentFile;
-
-          settings = {
-            homeserver = {
-              inherit (config) domain;
-              address = "https://matrix.${cfg.domain}";
-            };
-            appservice = {
-              database = {
-                type = "sqlite3-fk-wal";
-                uri = "file:${cfg.mautrix.discord.dataDir}/mautrix-discord.db?_txlock=immediate";
-              };
-            };
-            bridge = {
-              permissions = {
-                "$mxid_me" = "admin";
-                "$mxid_friend1" = "user";
-                "$mxid_friend2" = "user";
-                "$mxid_friend3" = "user";
-              };
-              double_puppet_server_map = {
-                "${cfg.domain}" = "$double_puppet_as_token";
-              };
-              backfill = {
-                forward_limits = {
-                  initial = {
-                    dm = 1000000;
-                    channel = 1000000;
-                    thread = 1000;
-                  };
-                  missed = {
-                    dm = -1;
-                    channel = -1;
-                    thread = -1;
-                  };
-                };
-              };
-              encryption = {
-                allow = true;
-                default = true;
-                allow_key_sharing = true;
-              };
-            };
-          };
-        };
       };
     };
 }
