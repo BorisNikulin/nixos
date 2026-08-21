@@ -3,7 +3,7 @@
   ...
 }:
 {
-  flake.nixosModules.sops = { config, ... }: {
+  flake.nixosModules.sops = { lib, config, ... }: {
     sops = {
       defaultSopsFile = ../secrets/secrets.yaml;
       age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
@@ -12,7 +12,15 @@
           neededForUsers = true;
         };
         "share/smb" = { };
-        "share/nvme-of/keyfile" = { };
+        "share/nvme-of/keyfile" = {
+          restartUnits =
+            lib.optionals (config.systemd.services ? nvmet) [
+              config.systemd.services.nvmet.name
+            ]
+            ++ lib.optionals (config.systemd.services ? nvme-connect) [
+              config.systemd.services.nvme-connect.name
+            ];
+        };
         "postfix/sasl_password_map" = lib.mkIf config.services.postfix.enable {
           owner = config.services.postfix.user;
           restartUnits = [ config.systemd.services.postfix.name ];

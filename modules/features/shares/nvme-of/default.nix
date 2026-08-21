@@ -4,6 +4,39 @@
   moduleWithSystem,
   ...
 }:
+let
+  # Shared by the host and target `keyFile` options — both read the same sops
+  # secret (`share/nvme-of/keyfile`) and the same NVMe/TCP TLS PSK keyfile.
+  keyFileDescription = ''
+    Path to an NVMe/TCP TLS PSK keyfile (the decrypted `share/nvme-of/keyfile`
+    sops secret). Each line is 5 space-separated fields:
+    `<ctrl-id> <host-nqn> <subsys-nqn> <secret> <psk>`.
+
+    The psk MUST be a NVMe TCP 2.0 / v2 key — prefix `NVMeTLSkey-1`, NOT
+    `NVMeTLSkey-0`. Keys generated with the default `-I 0`, or written directly
+    with `nvme gen-tls-key --keyfile`, are derived/unusable and the import
+    rejects them.
+
+    Rotating the key (run on the target; both hosts consume the same file):
+
+    Tooling: `nix run nixpkgs#nvme-cli` (nvme) and `nix run nixpkgs#keyutils`
+    (keyctl). Every keyring step needs **sudo** and **tlshd running as a
+    service** (the `.nvme` keyring only exists once tlshd is up).
+
+    1. Generate a v2 key and insert it into the `.nvme` keyring:
+       `sudo nvme gen-tls-key -I 1 -i -n <host-nqn> -c <subsys-nqn>`
+    2. Validate it landed: `sudo keyctl list %:.nvme`
+    3. Export it to a keyfile (only correct because a good v2 key is now in
+       the keyring): `sudo nvme tls-key --export --keyfile <file>`
+    4. Clear the keyring and confirm it is empty:
+       `sudo keyctl clear %:.nvme && sudo keyctl list %:.nvme`
+    5. Put the exported keyfile into `secrets/secrets.yaml` under
+       `share/nvme-of/keyfile`, commit, and deploy to both hosts.
+    6. Restart the consuming unit — `nvmet` (target) or `nvme-connect` (host) —
+       which runs `nvme tls-key --import --keyfile` to (re)insert the key.
+    7. Validate the new key is in: `sudo keyctl list %:.nvme`
+  '';
+in
 {
   flake.nixosModules.shareGameNvmeOfHost =
     {
@@ -176,7 +209,7 @@
           keyFile = lib.mkOption {
             default = config.sops.secrets."share/nvme-of/keyfile".path;
             type = lib.types.path;
-            # TODO: description; copy from host option below and or refactor to common option somehow
+            description = keyFileDescription;
           };
 
           config = lib.mkOption {
@@ -251,24 +284,7 @@
           keyFile = lib.mkOption {
             default = config.sops.secrets."share/nvme-of/keyfile".path;
             type = lib.types.path;
-            # TODO rework description now that things work with systemd invoked tlshd
-            # now it's just nvme tls-key --export --keyfile which now exports correctly
-            # then nvme tls-key --import --keyfile
-            # --identity 1 is probably still a good idea
-            #
-            # maybe you need to just init the .nvme keyring once to make it work
-            # and then have tls-key --export work?
-            # or you need to really run tlshd via a systemd service?
-            description = ''
-              Must contain the vars: TLS_PSK, NQN, and HOST_NQN.
-
-              Note that TLS_PKS must be a non derived key
-              i.e. a prefix of 'NVMEeTLSkey-1' and not 'NVMEeTLSkey-0'.
-              `nvme tls-key --export` writes unimportable/unusable dervived keys
-              and the `--keyfile` option (with --insert/-i) on `gen-tls-key`/`check-tls-key` does the same.
-              Also, use NVMe TCP 2.0 keys (`--identity 1`/`-I 1`) with `nvme gen-tls-key`
-              as the default, `-I 0`, keys do not seem to work.
-            '';
+            description = keyFileDescription;
           };
           package = lib.mkOption {
             default = pkgs.nvme-cli;
