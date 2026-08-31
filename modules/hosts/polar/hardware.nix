@@ -14,17 +14,20 @@
         inputs.nixpkgs.nixosModules.notDetected
       ];
 
-      boot.initrd.availableKernelModules = [
-        "ahci"
-        "xhci_pci"
-        "nvme"
-        "usbhid"
-        "usb_storage"
-        "sd_mod"
-      ];
-      boot.initrd.kernelModules = [ ];
-      boot.kernelModules = [ "kvm-amd" ];
-      boot.extraModulePackages = [ ];
+      boot = {
+        initrd = {
+          availableKernelModules = [
+            "ahci"
+            "xhci_pci"
+            "nvme"
+            "usbhid"
+            "usb_storage"
+            "sd_mod"
+          ];
+        };
+        kernelPackages = pkgs.linuxPackages_latest;
+        kernelModules = [ "kvm-amd" ];
+      };
 
       fileSystems."/" = {
         device = "/dev/disk/by-uuid/b351b51a-21e2-43de-955f-f8d893cb4695";
