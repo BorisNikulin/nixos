@@ -19,7 +19,7 @@
 
         mainUser
 
-        # shareGameIscsiTarget
+        # shareGameIscsiTarget (legacy; replaced by NVMe-oF — candidate for deletion)
         shareNvmeOfTargetGame
         shareSmbServer
 
@@ -30,6 +30,8 @@
         caddy
         monitoring
         matrixHomeServer
+
+        backupSun
       ];
 
       nix.settings.experimental-features = [
@@ -44,6 +46,17 @@
           systemd-boot.enable = true;
         };
       };
+
+      # The fast/main pools load their ZFS keys from /etc/zfs/key
+      # (zroot/encrypted/key, on the boot pool — already unlocked in the
+      # initrd). As a plain fstab mount it only appears at the main-system
+      # stage, in parallel with the data-pool zfs-import services, which run
+      # zfs load-key from those files. There is no ordering edge between the
+      # key .mount unit and the import services, so the import only finds the
+      # keys because the zroot-side mount is faster than the pool import. Make
+      # the key store an initrd mount so the files are present before any
+      # data-pool import: the key->import edge becomes explicit, not a race.
+      fileSystems."/etc/zfs/key".neededForBoot = true;
 
       services.zfs.trim = {
         enable = true;
@@ -70,19 +83,6 @@
       };
       # this option does not work; will return error
       services.zfs.zed.enableMail = false;
-
-      # /etc/zfs/key holds the encrypted dataset keyfiles (keylocation=file://)
-      # for fast/encrypted and main/encrypted, which are imported by the
-      # main-system zfs-import-* services (not the initrd, since only zroot is
-      # booted from). Mounting it as a boot mount means systemd orders it
-      # before zfs-import-fast/main (fileSystems -> requiredBy of the import
-      # services), eliminating the key-before-import race on first boot.
-      fileSystems."/etc/zfs/key" = {
-        device = "zroot/encrypted/key";
-        fsType = "zfs";
-        options = [ "noatime" "x-systemd.after=zfs-import-zroot.service" ];
-        neededForBoot = true;
-      };
 
       services.fwupd.enable = true;
 
@@ -182,7 +182,8 @@
         openFirewall = true;
         group = "media";
         dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".options.mountpoint;
-        cacheDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".options.mountpoint + "/cache";
+        cacheDir =
+          config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".options.mountpoint + "/cache";
       };
 
       networking.hostName = "sun";

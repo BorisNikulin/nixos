@@ -10,9 +10,16 @@
       imports = [
         inputs.disko-zfs.nixosModules.default
       ];
+
       # Apply zfs changes on nixos-rebuild switch.
       # Use dry-activate instead of switch to see changes.
       disko.zfs.enable = true;
+      disko.zfs.settings.ignoredDatasets = [
+        "main/backup/**"
+        "fast/backup/**"
+        "main/encrypted/backup/**"
+        "fast/encrypted/backup/**"
+      ];
 
       disko.devices =
         let
@@ -275,6 +282,9 @@
 
                   backup = {
                     type = "zfs_fs";
+                    options = {
+                      canmount = "off";
+                    };
                   };
                 }
 
@@ -329,25 +339,6 @@
                     # keylocation = "prompt";
                   };
                 };
-                "encrypted/share" = {
-                  type = "zfs_fs";
-                  mountpoint = "/mnt/main/share";
-                  options = {
-                    atime = "on";
-                  };
-                };
-                "encrypted/share/public" = {
-                  type = "zfs_fs";
-                  mountpoint = "/mnt/main/share/public";
-                };
-                "encrypted/share/public-write" = {
-                  type = "zfs_fs";
-                  mountpoint = "/mnt/main/share/public-write";
-                  options = {
-                    refquota = "1T";
-                  };
-                };
-
                 media = {
                   type = "zfs_fs";
                   options = {
@@ -357,10 +348,17 @@
 
                 backup = {
                   type = "zfs_fs";
+                  options = {
+                    canmount = "off";
+                  };
                 };
                 "encrypted/backup" = {
                   type = "zfs_fs";
+                  options = {
+                    canmount = "off";
+                  };
                 };
+
               };
             };
           };
@@ -370,11 +368,8 @@
         "fast"
         "main"
       ];
-
-      # Scope boot key loading to the encrypted roots only. The backup pools
-      # received 'zroot/encrypted/key' via raw zfs send and inherited
-      # keylocation=prompt; without this, boot would call
-      # systemd-ask-password for fast/backup/key and main/backup/key.
+      # Decrypt only the live trees at boot, so the key-store backups
+      # (*/backup/key, keylocation=prompt) stay locked instead of prompting.
       boot.zfs.requestEncryptionCredentials = [
         "zroot/encrypted"
         "fast/encrypted"
