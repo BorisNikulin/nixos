@@ -1,4 +1,4 @@
-result
+result*
 
 # Ignore everything under secrets/ by default; allow the sops manifest explicitly.
 secrets/*

@@ -71,6 +71,19 @@
       # this option does not work; will return error
       services.zfs.zed.enableMail = false;
 
+      # /etc/zfs/key holds the encrypted dataset keyfiles (keylocation=file://)
+      # for fast/encrypted and main/encrypted, which are imported by the
+      # main-system zfs-import-* services (not the initrd, since only zroot is
+      # booted from). Mounting it as a boot mount means systemd orders it
+      # before zfs-import-fast/main (fileSystems -> requiredBy of the import
+      # services), eliminating the key-before-import race on first boot.
+      fileSystems."/etc/zfs/key" = {
+        device = "zroot/encrypted/key";
+        fsType = "zfs";
+        options = [ "noatime" "x-systemd.after=zfs-import-zroot.service" ];
+        neededForBoot = true;
+      };
+
       services.fwupd.enable = true;
 
       services.smartd = {
@@ -168,8 +181,8 @@
         enable = true;
         openFirewall = true;
         group = "media";
-        dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".mountpoint;
-        cacheDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".mountpoint + "/cache";
+        dataDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".options.mountpoint;
+        cacheDir = config.disko.devices.zpool.fast.datasets."encrypted/app/jellyfin".options.mountpoint + "/cache";
       };
 
       networking.hostName = "sun";

@@ -19,7 +19,7 @@
 
           grafana = {
             dataDir = lib.mkOption {
-              default = config.disko.devices.zpool.fast.datasets."encrypted/app/grafana".mountpoint;
+              default = config.disko.devices.zpool.fast.datasets."encrypted/app/grafana".options.mountpoint;
               type = lib.types.path;
             };
 

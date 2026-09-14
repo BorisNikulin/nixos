@@ -193,7 +193,9 @@
                   mkAppDataset = appName: {
                     "encrypted/app/${appName}" = {
                       type = "zfs_fs";
-                      mountpoint = "/mnt/fast/app/${appName}";
+                      options = {
+                        mountpoint = "/mnt/fast/app/${appName}";
+                      };
                     };
                   };
                 in
@@ -213,15 +215,15 @@
                   };
                   "encrypted/share" = {
                     type = "zfs_fs";
-                    mountpoint = "/mnt/fast/share";
                     options = {
+                      mountpoint = "/mnt/fast/share";
                       atime = "on";
                     };
                   };
                   "encrypted/download" = {
                     type = "zfs_fs";
-                    mountpoint = "/mnt/fast/download";
                     options = {
+                      mountpoint = "/mnt/fast/download";
                       recordsize = "1M";
                     };
                   };
@@ -234,22 +236,30 @@
                   };
                   "encrypted/app/prometheus" = {
                     type = "zfs_fs";
-                    mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
+                    options = {
+                      mountpoint = "/var/lib/" + config.services.prometheus.stateDir;
+                    };
                   };
                   "encrypted/app/prowlarr" = {
                     type = "zfs_fs";
                     # Uses systemd DynamicUser which sandboxes under /var/lib/private
-                    mountpoint = "/var/lib/private/prowlarr";
+                    options = {
+                      mountpoint = "/var/lib/private/prowlarr";
+                    };
                   };
                   "encrypted/app/continuwuity" = {
                     type = "zfs_fs";
                     # Uses systemd DynamicUser which sandboxes under /var/lib/private
-                    mountpoint = "/var/lib/private/continuwuity";
+                    options = {
+                      mountpoint = "/var/lib/private/continuwuity";
+                    };
                   };
                   "encrypted/app/lldap" = {
                     type = "zfs_fs";
                     # Uses systemd DynamicUser which sandboxes under /var/lib/private
-                    mountpoint = "/var/lib/private/lldap";
+                    options = {
+                      mountpoint = "/var/lib/private/lldap";
+                    };
                   };
                   game = {
                     type = "zfs_volume";
@@ -340,7 +350,9 @@
 
                 media = {
                   type = "zfs_fs";
-                  mountpoint = "/mnt/main/media";
+                  options = {
+                    mountpoint = "/mnt/main/media";
+                  };
                 };
 
                 backup = {
@@ -357,6 +369,16 @@
       boot.zfs.extraPools = [
         "fast"
         "main"
+      ];
+
+      # Scope boot key loading to the encrypted roots only. The backup pools
+      # received 'zroot/encrypted/key' via raw zfs send and inherited
+      # keylocation=prompt; without this, boot would call
+      # systemd-ask-password for fast/backup/key and main/backup/key.
+      boot.zfs.requestEncryptionCredentials = [
+        "zroot/encrypted"
+        "fast/encrypted"
+        "main/encrypted"
       ];
     };
 }
