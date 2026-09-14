@@ -1,31 +1,34 @@
 { self, inputs, ... }: {
   flake.nixosModules.slothConfiguration = { pkgs, lib, ... }: {
-    imports = [
+    imports = with self.nixosModules; [
       inputs.sops-nix.nixosModules.sops
-      self.nixosModules.sops
+      sops
 
-      self.nixosModules.slothHardware
-      self.nixosModules.framework16
-      self.nixosModules.bootGrubZfs
-      self.nixosModules.networkingDefault
-      self.nixosModules.locale
-      self.nixosModules.time
-      self.nixosModules.fonts
-      self.nixosModules.audio
+      slothHardware
+      framework16
+      bootGrubZfs
+      networkingDefault
+      locale
+      time
+      fonts
+      audio
 
-      self.nixosModules.yubikey
-      self.nixosModules.neovim
+      shareSmbClient
+      shareSmb
 
-      self.nixosModules.plasma
-      self.nixosModules.games
+      yubikey
+      neovim
 
-      self.nixosModules.mainUser
+      plasma
+      games
+
+      mainUser
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
-        home-manager.sharedModules = [
-          self.homeModules.yubikey
+        home-manager.sharedModules = with self.homeModules; [
+          yubikey
         ];
         home-manager.users.main = self.homeModules.main;
       }

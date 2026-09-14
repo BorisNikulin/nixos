@@ -12,7 +12,10 @@
       fonts
       audio
 
-      shareGameNvmeOfHost
+      shareNvmeOfHostGame
+      shareSmbClient
+      shareSmb
+      shareSmbMedia
 
       moonlander
       yubikey

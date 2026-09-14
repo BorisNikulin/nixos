@@ -38,7 +38,7 @@ let
   '';
 in
 {
-  flake.nixosModules.shareGameNvmeOfHost =
+  flake.nixosModules.shareNvmeOfHostGame =
     {
       pkgs,
       lib,
@@ -92,7 +92,7 @@ in
       };
     };
 
-  flake.nixosModules.shareGameNvmeOfTarget = moduleWithSystem (
+  flake.nixosModules.shareNvmeOfTargetGame = moduleWithSystem (
     { self', pkgs, ... }:
     {
       lib,

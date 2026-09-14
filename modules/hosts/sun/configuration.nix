@@ -20,7 +20,7 @@
         mainUser
 
         # shareGameIscsiTarget
-        shareGameNvmeOfTarget
+        shareNvmeOfTargetGame
         shareSmbServer
 
         postfix
