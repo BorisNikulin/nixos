@@ -47,17 +47,6 @@
         };
       };
 
-      # The fast/main pools load their ZFS keys from /etc/zfs/key
-      # (zroot/encrypted/key, on the boot pool — already unlocked in the
-      # initrd). As a plain fstab mount it only appears at the main-system
-      # stage, in parallel with the data-pool zfs-import services, which run
-      # zfs load-key from those files. There is no ordering edge between the
-      # key .mount unit and the import services, so the import only finds the
-      # keys because the zroot-side mount is faster than the pool import. Make
-      # the key store an initrd mount so the files are present before any
-      # data-pool import: the key->import edge becomes explicit, not a race.
-      fileSystems."/etc/zfs/key".neededForBoot = true;
-
       services.zfs.trim = {
         enable = true;
         interval = "weekly";

@@ -368,8 +368,13 @@
         "fast"
         "main"
       ];
-      # Decrypt only the live trees at boot, so the key-store backups
-      # (*/backup/key, keylocation=prompt) stay locked instead of prompting.
+
+      # Mount this before others to ensure zfs key files are available
+      # to load fast/encrypted and main/encrypted.
+      fileSystems."/etc/zfs/key".neededForBoot = true;
+      # Explicitly prompt for creds to avoid unecessary password prompts
+      # such as for */backup/key or similar
+      # due to recursive discovery of encrypted datasets.
       boot.zfs.requestEncryptionCredentials = [
         "zroot/encrypted"
         "fast/encrypted"
