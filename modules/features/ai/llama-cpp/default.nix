@@ -14,16 +14,11 @@
           sleep-idle-seconds = "600";
         };
 
-        "Qwen3.8-27B-Q4-thinking" = {
+        # Thinking effort is instruction/prompt based.
+        # See pi harness on sending the correct chat template kwargs.
+        "Qwen3.8-27B-Q4" = {
           hf = "unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL";
           # https://unsloth.ai/docs/models/qwen3.8#qwen3.8-27b-settings
-          # This model reasons too much
-          # and will write a dissertation hemming and hawing on what's the capital of France.
-          # Low is still slightly too high and needs a system prompt to tell it to reason less.
-          # TODO: set up a system prompt to reduce reasoning and make it more direct/concise.
-          chat-template-kwargs = builtins.toJSON {
-            reasoning_effort = "low";
-          };
           temperature = "1.0";
           top-p = "0.95";
           top-k = "20";
