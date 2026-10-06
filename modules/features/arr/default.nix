@@ -1,6 +1,6 @@
 { self, inputs, ... }: {
   flake.nixosModules.arr =
-    { ... }:
+    { pkgs, lib, ... }:
     {
       imports = [
         self.nixosModules.qbittorrent

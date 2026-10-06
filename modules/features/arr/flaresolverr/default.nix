@@ -1,5 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.flaresolverr = { ... }: {
+  flake.nixosModules.flaresolverr = { pkgs, lib, ... }: {
     config = {
       services.flaresolverr.enable = true;
     };
