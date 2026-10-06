@@ -31,7 +31,7 @@
         monitoring
         matrixHomeServer
 
-        vpnProtonQb
+        arr
 
         backupSun
       ];
@@ -160,13 +160,6 @@
       systemd.services.lldap.serviceConfig.CapabilityBoundingSet = [ "CAP_NET_BIND_SERVICE" ];
 
       networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
-
-      # services.servarr = {
-      #   # enable = true;
-      #   openFirewall = true;
-      #   group = "media";
-      #   parentDataDir = "/mnt/fast/app";
-      # };
 
       services.jellyfin = {
         enable = true;

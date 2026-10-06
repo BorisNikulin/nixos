@@ -290,7 +290,7 @@
 
                 // mkAppDataset "mautrix-discord"
                 // mkAppDataset "jellyfin"
-                // mkAppDataset "qbittorent"
+                // mkAppDataset "qbittorrent"
                 // mkAppDataset "radarr"
                 // mkAppDataset "sonarr"
                 // mkAppDataset "grafana";

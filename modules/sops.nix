@@ -42,6 +42,31 @@
           owner = config.systemd.services.lldap.serviceConfig.User;
           restartUnits = [ config.systemd.services.lldap.name ];
         };
+        "arr/prowlarr/api_key" = lib.mkIf config.services.prowlarr.enable {
+        };
+        "arr/radarr/api_key" = lib.mkIf config.services.recyclarr.enable {
+          owner = config.services.recyclarr.user;
+        };
+        "arr/sonarr/api_key" = lib.mkIf config.services.recyclarr.enable {
+          owner = config.services.recyclarr.user;
+        };
+      };
+      templates = {
+        "arr-prowlarr-api-key" = lib.mkIf config.services.prowlarr.enable {
+          content = ''
+            PROWLARR__AUTH__APIKEY=${config.sops.placeholder."arr/prowlarr/api_key"}
+          '';
+        };
+        "arr-radarr-api-key" = lib.mkIf config.services.radarr.enable {
+          content = ''
+            RADARR__AUTH__APIKEY=${config.sops.placeholder."arr/radarr/api_key"}
+          '';
+        };
+        "arr-sonarr-api-key" = lib.mkIf config.services.sonarr.enable {
+          content = ''
+            SONARR__AUTH__APIKEY=${config.sops.placeholder."arr/sonarr/api_key"}
+          '';
+        };
       };
     };
   };
