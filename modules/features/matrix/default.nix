@@ -68,10 +68,10 @@
         };
 
         services.caddy = {
-          package = pkgs.caddy.withPlugins {
-            plugins = [ "github.com/mholt/caddy-l4@v0.1.2" ];
-            hash = "sha256-UIv8PxtJMlX7qClnPazFsSSl7G1BzsTT8VjrMIfB46Q=";
-          };
+          # package = pkgs.caddy.withPlugins {
+          #   plugins = [ "github.com/mholt/caddy-l4@v0.1.2" ];
+          #   hash = "sha256-UIv8PxtJMlX7qClnPazFsSSl7G1BzsTT8VjrMIfB46Q=";
+          # };
           # globalConfig = ''
           #   servers {
           #     listener_wrappers {
@@ -135,7 +135,6 @@
               allow_federation = true;
               trusted_servers = [ "matrix.org" ];
 
-              # inherit (matrixClientConfig."m.homeserver") matrix_rtc;
               matrix_rtc = {
                 foci = matrixClientConfig."org.matrix.msc4143.rtc_foci";
               };
@@ -234,14 +233,7 @@
 
           serviceConfig.Type = "oneshot";
           unitConfig.ConditionPathExists = "!${keyFile}";
-
         };
-
-        # TODO: reevaluate
-        nixpkgs.config.permittedInsecurePackages = [
-          "olm-3.2.16"
-        ];
-
       };
     };
 }
