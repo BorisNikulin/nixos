@@ -31,6 +31,8 @@
         monitoring
         matrixHomeServer
 
+        vpnProtonQb
+
         backupSun
       ];
 

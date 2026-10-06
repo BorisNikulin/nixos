@@ -29,9 +29,9 @@
           owner = config.services.postfix.user;
           restartUnits = [ config.systemd.services.postfix.name ];
         };
-        "proton/qb" = # lib.mkIf config.networking.protonWireguard.qb.enable
-          {
-          };
+        "proton/qb" = lib.mkIf config.systemd.network.enable {
+          owner = "systemd-network";
+        };
         "cloudflare/dns_api_token" = lib.mkIf config.security.acme.acceptTerms {
         };
         "grafana/secret_key" = lib.mkIf config.services.grafana.enable {
