@@ -37,6 +37,13 @@
           nix flake check
 
           updateCloudflareIpsDriftCheck
+
+          # NVMe-oF write failures: nvmet_tcp targets advertise MDTS=0 until the
+          # upstream .get_mdts patch lands. If resolved and in the kernel we run,
+          # remove the max_sectors_kb udev mitigation in
+          # modules/features/shares/nvme-of/default.nix (nvmeOfHost).
+          echo "Check https://github.com/truenas/truenas-proxmox-plugin/issues/96 (nvmet_tcp MDTS=0) for resolution; if the patch landed locally, drop the nvme-of max_sectors_kb workaround."
+
         '';
       };
     };

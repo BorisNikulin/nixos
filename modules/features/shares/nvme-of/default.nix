@@ -67,8 +67,6 @@ in
                   # 60s seemed to mostly resolve it.
                   keep_alive_tmo = 300;
                   reconnect_delay = 10;
-                  # 2 days
-                  # ctrl_loss_tmo = 172800;
                 }
               ];
             }
@@ -77,7 +75,7 @@ in
       ];
 
       fileSystems."/mnt/game" = {
-        device = "/dev/disk/by-uuid/dbd5d94a-e526-4bbe-85b5-d9597060ebae";
+        device = "/dev/disk/by-uuid/f51f947f-8b72-4293-b9f9-e3b446617589";
         fsType = "ext4";
         options = [
           "x-systemd.requires=${config.systemd.services.nvme-connect.name}"
@@ -172,6 +170,14 @@ in
         };
       };
 
+
+      # Seems to be necessary?
+      # Also see some resolvd errors/warns that could be relevant.
+      # Though I did see 1
+      # Oct 11 07:37:40 sun tlshd[12189]: gnutls: Error in the push function. (-53)
+      # Though no failed to resolve name logs from tlshd.
+      # TODO: Fix this somehow especially since this is a dynamic DHCP address.
+      networking.hosts."10.0.20.7" = [ "polar" ];
     }
   );
 
@@ -235,6 +241,39 @@ in
         };
 
         boot.kernelModules = [ "nvmet" ];
+
+        # Top level issue? https://github.com/truenas/truenas-proxmox-plugin/issues/96.
+        # Patch from https://lore.kernel.org/linux-nvme/20260831005117.142713-1-gerencia@idkmanager.com/
+        # In process of being reviewed though it is v3 and generally accepted.
+        # Also it's a copy of the same change done to RMDA transport type.
+        # MDTS: max data transfer size.
+        # Patch sets the get MDTS function op ptr in the operations dictionary for tcp
+        # (uses dictionary passing per transport type similar to haskell existential types).
+        # This changes the advertised MDTS from 0
+        # (server/target advertises 0/no limit -> client/initiator/host picks 32 MiB -> potential error)
+        # to 4KiB.
+        # Error example:
+        # journalctl: nvmet_tcp: queue N: failed to map data
+        # host sees sct 0x0 / sc 0xf in dmesg
+
+        #
+        # Check for potential oversized command issues:
+        # $ nvme show-topology
+        # $ nvme list
+        # $ for d in /sys/block/nvme*; do printf '%s %s\n' "$d" "$(cat $d/queue/max_sectors_kb)"; done
+        # /sys/block/nvme0n1 128
+        # /sys/block/nvme1c1n1 1024
+        # /sys/block/nvme1n1 1024
+        #
+        # A udev rule on the initator/host side doesn't work but you can temporarily fix it via:
+        # $ sudo sh -c 'echo 1024 > /sys/block/nvme1c1n1/queue/max_sectors_kb'
+        # $ sudo sh -c 'echo 1024 > /sys/block/nvme1n1/queue/max_sectors_kb'
+        boot.kernelPatches = [
+          {
+            name = "nvmet-tcp-mdts";
+            patch = ./nvmet-tcp-mdts.patch;
+          }
+        ];
 
         systemd.services.nvmet = {
           wantedBy = [ "multi-user.target" ];
@@ -327,9 +366,7 @@ in
             RemainAfterExit = true;
           };
         };
-
       };
-
     };
 
   flake.nixosModules.tlshd =

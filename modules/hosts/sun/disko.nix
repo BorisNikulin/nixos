@@ -268,6 +268,7 @@
                       mountpoint = "/var/lib/private/lldap";
                     };
                   };
+
                   game = {
                     type = "zfs_volume";
                     size = "1T";
@@ -276,7 +277,7 @@
                     };
                     # content = {
                     #   type = "filesystem";
-                    #   format = "ntfs";
+                    #   format = "ext4";
                     # };
                   };
 

@@ -179,7 +179,7 @@
 
       systemd.network = {
         enable = true;
-        networks."10-wan" = {
+        networks."10-lan" = {
           matchConfig.Name = "enp7s0";
           networkConfig = {
             # start a DHCP client for IPv4 addressing/routing
@@ -190,8 +190,8 @@
           linkConfig.RequiredForOnline = "routable";
         };
       };
-      # dhcpcd is on by default; networkd supersedes it
-      networking.dhcpcd.enable = false;
+      # networkd supersedes dhcpcd; disable scripting DHCP to keep the two from managing the same interfaces
+      networking.useDHCP = false;
 
       # Set your time zone.
       time.timeZone = "America/Los_Angeles";
