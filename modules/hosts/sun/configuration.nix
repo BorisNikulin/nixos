@@ -181,12 +181,22 @@
       # Pick only one of the below networking options.
       # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
       networking.nftables.enable = true;
-      # networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-      # networking.protonWireguard.qb = {
-      #   # enable = true;
-      #   privateKeyFile = config.sops.secrets."proton/qb".path;
-      # };
+      systemd.network = {
+        enable = true;
+        networks."10-wan" = {
+          matchConfig.Name = "enp7s0";
+          networkConfig = {
+            # start a DHCP client for IPv4 addressing/routing
+            DHCP = "ipv4";
+            # accept router advertisements for stateless IPv6 (SLAAC)
+            IPv6AcceptRA = true;
+          };
+          linkConfig.RequiredForOnline = "routable";
+        };
+      };
+      # dhcpcd is on by default; networkd supersedes it
+      networking.dhcpcd.enable = false;
 
       # Set your time zone.
       time.timeZone = "America/Los_Angeles";
