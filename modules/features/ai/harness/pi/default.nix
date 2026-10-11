@@ -17,10 +17,7 @@
           defaultProvider = "llama.cpp";
           defaultModel = "Qwen3.8-27B-Q4";
           theme = "dark";
-          packages = [
-            "npm:pi-web-access"
-            "npm:pi-mcp-adapter"
-          ];
+          packages = [ "npm:pi-web-access" ];
         };
 
         models = {
@@ -55,5 +52,9 @@
       };
 
       home.file."${config.programs.pi-coding-agent.configDir}/mcp.json".text = config.aiMcpLocal.mcpJson;
+
+      home.packages = with pkgs; [
+        wl-clipboard
+      ];
     };
 }
