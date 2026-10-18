@@ -72,12 +72,12 @@
             };
             Preferences = {
               General = {
+                DeleteTorrentsFilesAsDefault = true;
                 StatusbarExternalIPDisplayed = true;
               };
               WebUI = {
-                # Host header validation is on by default; narrow the allowed
-                # hosts from the default "*" to the caddy vhost name.
-                ServerDomains = "qb.${config.domain}";
+                # Quotes in value needed as on import qb only keeps the first entry otherwise. 
+                ServerDomains = "\"localhost; qb.${config.domain}\"";
                 Username = "skimming9138";
                 Password_PBKDF2 = "@ByteArray(w3q9jb7VMR+qJ2xTmC+e/g==:hXu3zqQVCkjqPANqG8YJOctX9l/JNqkXpk1bcozmq6/xd2je0IQ2FlTEknbAUikbOvHl6miyvUpSEOaQtabH/Q==)";
               };
