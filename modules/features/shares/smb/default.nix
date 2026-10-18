@@ -1,43 +1,30 @@
 { self, inputs, ... }: {
   flake.nixosModules.shareSmbServer =
+    { pkgs, lib, config, ... }:
     {
-      pkgs,
-      lib,
-      config,
-      ...
-    }:
-    {
-      #TODO: figure our user situation
-      # curently it's imperative and requires manually enrolling a unix user to samba
+      #TODO: figure out the user situation; enrollment is currently
+      # imperative (add each unix user to samba manually).
       services.samba = {
         enable = true;
         openFirewall = true;
         settings = {
           global = {
-            "workgroup" = "WORKGROUP";
             "server string" = config.networking.hostName;
-            "netbios name" = config.networking.hostName;
-            "security" = "user";
-            # "use sendfile" = "yes";
-            #"max protocol" = "smb2";
-            # note: localhost is the ipv6 localhost ::1
             "hosts allow" = "10.0.0.0/8";
-            # "hosts deny" = "0.0.0.0/0";
-            "guest account" = "nobody";
             "map to guest" = "bad user";
+            # Map ':' to '÷' in CIFS names so ZFS snapshot names stay usable.
+            # Samba's default mangling would render them as unreadable 8.3-style names over SMB.
+            "vfs objects" = "catia";
+            "catia:mappings" = "0x3a:0xf7";
           };
           "share" = {
             "path" = config.disko.devices.zpool.fast.datasets."encrypted/share".options.mountpoint;
-            "browseable" = "yes";
             "read only" = "no";
-            "guest ok" = "no";
           };
           "media" = {
             "path" = config.disko.devices.zpool.main.datasets.media.options.mountpoint;
             "force group" = "media";
-            "browseable" = "yes";
             "read only" = "no";
-            "guest ok" = "no";
           };
         };
       };
@@ -48,35 +35,9 @@
   # (shareSmb, shareSmbMedia) which append to `shares`. Importing a module
   # twice is an error, so the share modules don't import the base.
   flake.nixosModules.shareSmbClient =
-    {
-      pkgs,
-      lib,
-      config,
-      ...
-    }:
+    { pkgs, lib, config, ... }:
     let
       cfg = config.services.smbClient;
-
-      # An entry is either a plain share name (mounted at /mnt/<share>) or an
-      # attrset to override the mount point when it differs from the share name.
-      entry = lib.types.oneOf [
-        lib.types.str
-        (lib.types.submodule {
-          options = {
-            share = lib.mkOption {
-              type = lib.types.str;
-              description = "Name of the SMB share on the server.";
-            };
-            mountPoint = lib.mkOption {
-              type = lib.types.nullOr lib.types.str;
-              default = null;
-              description = "Local mount point (default: /mnt/<share>).";
-            };
-          };
-        })
-      ];
-
-      norm = e: if lib.isAttrs e then e else { share = e; };
     in
     {
       options.services.smbClient = {
@@ -92,20 +53,16 @@
         };
         shares = lib.mkOption {
           default = [ ];
-          type = lib.types.listOf entry;
-          description = "SMB shares to mount; entries from multiple modules are concatenated. An entry is a share name, or { share, ?mountPoint };";
+          type = lib.types.listOf lib.types.str;
+          description = "SMB shares to mount, each at /mnt/<share>; entries from multiple modules are concatenated.";
         };
       };
 
       config.fileSystems = lib.listToAttrs (
         lib.map (
-          e:
-          let
-            s = norm e;
-            mountPoint = if s ? mountPoint && s.mountPoint != null then s.mountPoint else "/mnt/${s.share}";
-          in
-          lib.nameValuePair mountPoint {
-            device = "//${cfg.server}/${s.share}";
+          s:
+          lib.nameValuePair "/mnt/${s}" {
+            device = "//${cfg.server}/${s}";
             fsType = "cifs";
             options = [
               "x-systemd.automount"
@@ -123,13 +80,11 @@
       );
     };
 
-  # One module per share: appends that share to services.smbClient.shares
-  # (no enable option — importing the module is the enable).
-  flake.nixosModules.shareSmb = { ... }: {
+  flake.nixosModules.shareSmb = { pkgs, lib, ... }: {
     services.smbClient.shares = [ "share" ];
   };
 
-  flake.nixosModules.shareSmbMedia = { ... }: {
+  flake.nixosModules.shareSmbMedia = { pkgs, lib, ... }: {
     services.smbClient.shares = [ "media" ];
   };
 }
