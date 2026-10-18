@@ -41,6 +41,7 @@
           };
 
           settings = {
+            log_level = "info";
             server = {
               address = "tcp://${config.auth.forwardAuth.upstream}";
             };
