@@ -16,7 +16,7 @@
           type = lib.types.str;
         };
         openFirewall = lib.mkOption {
-          default = true;
+          default = false;
           type = lib.types.bool;
         };
       };
@@ -30,7 +30,23 @@
           settings = {
             update.automatically = false;
             log.analyticsEnabled = false;
+            Auth.Method = "External";
           };
+        };
+
+        auth.apps.prowlarr = {
+          domain = "prowlarr.${config.domain}";
+          groups = {
+            admin = "prowlarr-admin";
+          };
+        };
+
+        services.caddy.virtualHosts."prowlarr.${config.domain}" = {
+          useACMEHost = config.certs.wildcard.acmeHost;
+          extraConfig = ''
+            ${config.auth.forwardAuth.caddyForwardAuth { }}
+            reverse_proxy http://localhost:${toString config.services.prowlarr.settings.server.port}
+          '';
         };
       };
     };

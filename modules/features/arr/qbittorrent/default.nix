@@ -34,6 +34,10 @@
           type = lib.types.str;
           description = "Interface for BT traffic.";
         };
+        openFirewall = lib.mkOption {
+          default = false;
+          type = lib.types.bool;
+        };
       };
 
       config = {
@@ -42,8 +46,7 @@
           profileDir = cfg.profileDir;
           group = "media";
           webuiPort = cfg.webuiPort;
-          # TODO? LAN-only for now; caddy exposure TBD, pending authelia/lldap auth
-          openFirewall = true;
+          openFirewall = cfg.openFirewall;
           serverConfig = {
             LegalNotice.Accepted = true;
             BitTorrent.Session = {
@@ -72,11 +75,29 @@
                 StatusbarExternalIPDisplayed = true;
               };
               WebUI = {
+                # Host header validation is on by default; narrow the allowed
+                # hosts from the default "*" to the caddy vhost name.
+                ServerDomains = "qb.${config.domain}";
                 Username = "skimming9138";
                 Password_PBKDF2 = "@ByteArray(w3q9jb7VMR+qJ2xTmC+e/g==:hXu3zqQVCkjqPANqG8YJOctX9l/JNqkXpk1bcozmq6/xd2je0IQ2FlTEknbAUikbOvHl6miyvUpSEOaQtabH/Q==)";
               };
             };
           };
+        };
+
+        auth.apps.qb = {
+          domain = "qb.${config.domain}";
+          groups = {
+            admin = "qb-admin";
+          };
+        };
+
+        services.caddy.virtualHosts."qb.${config.domain}" = {
+          useACMEHost = config.certs.wildcard.acmeHost;
+          extraConfig = ''
+            ${config.auth.forwardAuth.caddyForwardAuth { }}
+            reverse_proxy http://localhost:${toString cfg.webuiPort}
+          '';
         };
       };
     };

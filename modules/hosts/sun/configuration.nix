@@ -138,19 +138,15 @@
           password_file = config.sops.secrets."lldap/bind_pass/authelia".path;
         };
 
-        # focu5 is the first real user. Per-app lldap groups are declared in each
-        # app module via auth.apps (grafana, radarr, sonarr) and aggregated by the
-        # auth feature; users reference them by name here.
         focu5 = {
-          # Placeholder identity details; edit in the lldap UI and rerun the
-          # bootstrap to see whether manual edits persist (bootstrap is convergent,
-          # so expect them to revert).
           email = "NikulinBE@gmail.com";
           displayName = "Boris";
-          groups = [
-            "radarr-admin"
-            "sonarr-admin"
-            "grafana"
+          groups = with config.auth.apps; [
+            radarr.groups.admin
+            sonarr.groups.admin
+            prowlarr.groups.admin
+            qb.groups.admin
+            grafana.groups.view
           ];
           password_file = config.sops.secrets."lldap/user_pass/focu5".path;
         };
