@@ -28,9 +28,10 @@
         domain
         certs
         caddy
+        auth
         monitoring
-        matrixHomeServer
 
+        matrixHomeServer
         arr
 
         backupSun
@@ -127,37 +128,33 @@
 
       # TODO: Submit PR to add user and group creation to (see memcached.nix for example)
       # https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/lldap.nix
-      users.users.lldap = {
-        description = "lldap server user";
-        isSystemUser = true;
-        group = "lldap";
-      };
-      users.groups.lldap = { };
+      # Bind account used by authelia (and future LDAP clients) to read the
+      # directory and set user passwords; lldap_password_manager grants reads
+      # plus password changes (no general write, no admin).
+      services.lldap.bootstrap.users = {
+        "bind-authelia" = {
+          email = "bind-authelia@rhakotis.xyz";
+          groups = [ "lldap_password_manager" ];
+          password_file = config.sops.secrets."lldap/bind_pass/authelia".path;
+        };
 
-      services.lldap = {
-        enable = true;
-        settings = {
-          ldap_base_dn = "dc=rhakotis,dc=xyz";
-
-          ldap_user_dn = "admin";
-          force_ldap_user_pass_reset = "always";
-          ldap_user_pass_file = config.sops.secrets."lldap/user_pass".path;
-
-          ldaps_options =
-            let
-              certDir = config.security.acme.certs."ldap.rhakotis.xyz".directory;
-            in
-            {
-              enabled = true;
-              port = 636;
-              cert_file = "${certDir}/cert.pem";
-              key_file = "${certDir}/key.pem";
-            };
+        # focu5 is the first real user. Per-app lldap groups are declared in each
+        # app module via auth.apps (grafana, radarr, sonarr) and aggregated by the
+        # auth feature; users reference them by name here.
+        focu5 = {
+          # Placeholder identity details; edit in the lldap UI and rerun the
+          # bootstrap to see whether manual edits persist (bootstrap is convergent,
+          # so expect them to revert).
+          email = "NikulinBE@gmail.com";
+          displayName = "Boris";
+          groups = [
+            "radarr-admin"
+            "sonarr-admin"
+            "grafana"
+          ];
+          password_file = config.sops.secrets."lldap/user_pass/focu5".path;
         };
       };
-      # Allow binding to ports < 1024
-      systemd.services.lldap.serviceConfig.AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
-      systemd.services.lldap.serviceConfig.CapabilityBoundingSet = [ "CAP_NET_BIND_SERVICE" ];
 
       networking.firewall.allowedTCPPorts = [ config.services.prometheus.port ];
 

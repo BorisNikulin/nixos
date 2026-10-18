@@ -1,6 +1,11 @@
 { self, inputs, ... }: {
   flake.nixosModules.shareSmbServer =
-    { pkgs, lib, config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     {
       #TODO: figure out the user situation; enrollment is currently
       # imperative (add each unix user to samba manually).
@@ -35,7 +40,12 @@
   # (shareSmb, shareSmbMedia) which append to `shares`. Importing a module
   # twice is an error, so the share modules don't import the base.
   flake.nixosModules.shareSmbClient =
-    { pkgs, lib, config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       cfg = config.services.smbClient;
     in

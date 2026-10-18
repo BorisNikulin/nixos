@@ -22,7 +22,6 @@
               default = config.disko.devices.zpool.fast.datasets."encrypted/app/grafana".options.mountpoint;
               type = lib.types.path;
             };
-
             secretKeyFile = lib.mkOption {
               default = config.sops.secrets."grafana/secret_key".path;
               type = lib.types.path;
@@ -77,18 +76,26 @@
           enable = true;
 
           inherit (cfg.grafana) dataDir;
-          openFirewall = true;
+          openFirewall = false;
 
           settings = {
             security = {
               secret_key = "$__file{${cfg.grafana.secretKeyFile}}";
             };
             server = {
-              http_addr = "0.0.0.0";
+              http_addr = "127.0.0.1";
               http_port = 3000;
               domain = "grafana.${config.domain}";
-
               enable_gzip = true;
+            };
+
+            "auth.proxy" = {
+              enabled = true;
+              header_name = "Remote-User";
+              headers = "Name:Remote-Name Email:Remote-Email Groups:Remote-Groups Role:Remote-Role";
+              whitelist = "127.0.0.1, ::1";
+              # Resync org role (permissions) faster than 15m default.
+              sync_ttl = 2;
             };
 
             analytics.reporting_enabled = false;
@@ -127,10 +134,26 @@
         # environment.etc."grafana-dashboards/airgradient.json".source =
         #  ./grafana-dashboards/airgradient.json;
 
+        auth.apps.grafana = {
+          domain = "grafana.${config.domain}";
+          groups = {
+            view = "grafana";
+            admin = "grafana-admin";
+          };
+        };
+
         services.caddy = {
           virtualHosts."grafana.${config.domain}" = {
             useACMEHost = config.certs.wildcard.acmeHost;
             extraConfig = ''
+              # Enable logout without enabling session cookie in grafana.
+              redir /logout https://auth.${config.domain}/logout 302
+
+              # Manually set role (permissions) header if group contains grafana admin group.
+              @grafana header Remote-Groups "*${config.auth.apps.grafana.groups.admin}*"
+              ${config.auth.forwardAuth.caddyForwardAuth { }}
+              request_header @grafana Remote-Role "Admin"
+
               reverse_proxy http://localhost:${toString config.services.grafana.settings.server.http_port}
             '';
           };

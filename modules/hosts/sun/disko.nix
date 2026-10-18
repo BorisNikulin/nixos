@@ -289,6 +289,7 @@
                   };
                 }
 
+                // mkAppDataset "authelia"
                 // mkAppDataset "mautrix-discord"
                 // mkAppDataset "jellyfin"
                 // mkAppDataset "qbittorrent"

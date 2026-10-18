@@ -38,9 +38,25 @@
           owner = config.systemd.services.grafana.serviceConfig.User;
           restartUnits = [ config.systemd.services.grafana.name ];
         };
-        "lldap/user_pass" = lib.mkIf config.services.lldap.enable {
+        "lldap/admin_pass" = lib.mkIf config.services.lldap.enable {
           owner = config.systemd.services.lldap.serviceConfig.User;
           restartUnits = [ config.systemd.services.lldap.name ];
+        };
+        "lldap/bind_pass/authelia" = lib.mkIf config.services.lldap.enable {
+        };
+        "lldap/user_pass/focu5" = lib.mkIf config.services.lldap.enable { };
+        "authelia/ldap_bind_password" = lib.mkIf config.services.authelia.instances.main.enable {
+          key = "lldap/bind_pass/authelia";
+          owner = "authelia";
+          restartUnits = [ "authelia.service" ];
+        };
+        "authelia/storage_key" = lib.mkIf config.services.authelia.instances.main.enable {
+          owner = "authelia";
+          restartUnits = [ "authelia.service" ];
+        };
+        "authelia/jwt_secret" = lib.mkIf config.services.authelia.instances.main.enable {
+          owner = "authelia";
+          restartUnits = [ "authelia.service" ];
         };
         "arr/prowlarr/api_key" = lib.mkIf config.services.prowlarr.enable {
         };

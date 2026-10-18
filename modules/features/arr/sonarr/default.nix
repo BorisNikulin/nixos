@@ -11,7 +11,7 @@
           type = lib.types.str;
         };
         openFirewall = lib.mkOption {
-          default = true;
+          default = false;
           type = lib.types.bool;
         };
       };
@@ -26,7 +26,23 @@
           settings = {
             update.automatically = false;
             log.analyticsEnabled = false;
+            Auth.Method = "External";
           };
+        };
+
+        auth.apps.sonarr = {
+          domain = "sonarr.${config.domain}";
+          groups = {
+            admin = "sonarr-admin";
+          };
+        };
+
+        services.caddy.virtualHosts."sonarr.${config.domain}" = {
+          useACMEHost = config.certs.wildcard.acmeHost;
+          extraConfig = ''
+            ${config.auth.forwardAuth.caddyForwardAuth { }}
+            reverse_proxy http://localhost:${toString config.services.sonarr.settings.server.port}
+          '';
         };
       };
     };
